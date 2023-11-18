@@ -11,6 +11,7 @@ public class FluidManager2 {
     private Vector2[][] velocity;
     private Vector2[][] velPrev;
     private float[][] pressure;
+    private ArrayMap<Vector2> velocityMap;
 
     public FluidManager2(int xRes, int yRes) {
         X_RES = xRes;
@@ -24,6 +25,7 @@ public class FluidManager2 {
                 velPrev[i][j] = new Vector2(0f, 0f);
             }
         }
+        velocityMap = new ArrayMap<>(X_RES, Y_RES);
         System.out.println(velocity[0][0]);
         System.out.println(yRes);
 
@@ -41,6 +43,10 @@ public class FluidManager2 {
     public void step(float dt) {
 //        swap();
 //        advect(dt);
+    }
+
+    public ArrayMap<Vector2> getVelocityMap() {
+        return velocityMap;
     }
 
     private void advect(float dt) {

@@ -2,7 +2,7 @@ package com.mygdx.game.element;
 
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.ArrayMap;
-import com.mygdx.game.GameManager;
+import com.mygdx.game.ElementManager;
 
 public abstract class Solid extends Particle {
 
@@ -15,7 +15,7 @@ public abstract class Solid extends Particle {
         Vector2 res = oldPos
                 .cpy()
                 .add(getVel())
-                .add(GameManager.G);
+                .add(ElementManager.G);
         if(velMap.get(oldPos) != null) {
             res.add(velMap.get(oldPos));
         }

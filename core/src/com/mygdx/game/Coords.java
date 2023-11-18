@@ -28,8 +28,6 @@ public class Coords {
         return v.y;
     }
 
-    // optimization: turn into 1D array with ints that represent an entire coordinate, unpack
-    // with bit shifting
     public static void line(int x0, int y0, int x1, int y1,
                                          int radius, Consumer<Vector2> lineFn) {
         if(x0 == x1 && y0 == y1)
