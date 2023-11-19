@@ -46,10 +46,8 @@ public class PenManager implements InputProcessor {
 
     // perform pen action
     public void act() {
-        if(penType == PenType.FREE) {
-            if(placing && (boundsCheck(mouseX, mouseY) || boundsCheck(mousePrevX, mousePrevY))) {
-                Coords.line(mousePrevX, mousePrevY, mouseX, mouseY, penSize, penAction);
-            }
+        if(penType == PenType.FREE && placing) {
+            Coords.line(mousePrevX, mousePrevY, mouseX, mouseY, penSize, penAction);
         }
     }
 

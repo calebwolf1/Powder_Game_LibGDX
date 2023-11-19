@@ -104,10 +104,6 @@ public class ElementManager {
     }
 
     public void reset() {
-        // relies on each element storing its position, will probably have to change
-//        for(Element e : elements) {
-//            elementMap.set(e.getPos(), null);
-//        }
         for(int y = 0; y < Y_RES; y++) {
             for(int x = 0; x < X_RES; x++) {
                 elementMap.set(x, y, null);
@@ -118,11 +114,8 @@ public class ElementManager {
     }
 
     private void makeBorder() {
-        BiIntConsumer lineFn = (x, y) -> {
-            Block block = new Block(x, y);
-            elementMap.set(x, y, block);
-            elements.add(block);
-        };
+        BiIntConsumer lineFn = (x, y) -> placeElement(x, y, Block.class);
+
         int i = 0;
         while(i < BORDER_WIDTH) {
             int yLim = Y_RES - 1 - i;
