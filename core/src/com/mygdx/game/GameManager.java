@@ -7,7 +7,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class GameManager extends ApplicationAdapter {
-	// TODO: make Vector2 and int pair parameters consistent
 	// possible optimization: store Element positions as longs composed of two ints
 	// constants
 	private static final float T_PROP = 0.75f; // proportion of game screen taken up by top layer
