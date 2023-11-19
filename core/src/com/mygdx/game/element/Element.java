@@ -5,7 +5,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.RectDrawer;
 
 public abstract class Element {
-    private Vector2 pos;
+//    private Vector2 pos;
+    protected int x, y;
+
     /**
      * Gets the color of this Particle. Every concrete descendant of Particle has a static color,
      * but the value of a static field in a class is shared by every subclass, which is not what
@@ -16,24 +18,25 @@ public abstract class Element {
      */
     public abstract Color getColor();
 
-    public Element(Vector2 pos) {
-        this.pos = pos;
+    public Element(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
 
-    public Vector2 getPos() {
-        return pos;
-    }
+//    public Vector2 getPos() {
+//        return pos;
+//    }
 
-    public void setPos(Vector2 newPos) {
-        this.pos = newPos;
-    }
+//    public void setPos(Vector2 newPos) {
+//        this.pos = newPos;
+//    }
 
     /**
      * Draws this Element at the given position
      * @param pos The position of this Element in simulation coordinates
      */
     public void draw(RectDrawer shape) {
-        shape.drawRect(Math.round(pos.x), Math.round(pos.y), 1, 1, getColor());
+        shape.drawRect(x, y, 1, 1, getColor());
     }
 
 }

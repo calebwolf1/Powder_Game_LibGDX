@@ -67,8 +67,7 @@ public class GameManager extends ApplicationAdapter {
 
 		// draw game area
 		gameViewport.apply();
-		Consumer<Vector2> drawRedRect = p -> shape.drawRect(Math.round(p.x), Math.round(p.y), 1,
-				1, Color.RED);
+		BiIntConsumer drawRedRect = (x, y) -> shape.drawRect(x, y, 1, 1, Color.RED);
 		shape.drawRect(0, 0, X_RES, Y_RES, Color.BLACK);
 		// draw pressure and velocity of each cell of fluid manager first
 		fluidManager.applyPressureFn(((xPos, yPos, p) ->
@@ -113,8 +112,8 @@ public class GameManager extends ApplicationAdapter {
 		controlStage.getViewport().update(width, height);
 	}
 
-	private void placeElement(Vector2 pos) {
-		elementManager.placeElement(pos, penManager.getActiveElement());
+	private void placeElement(int x, int y) {
+		elementManager.placeElement(x, y, penManager.getActiveElement());
 	}
 
 

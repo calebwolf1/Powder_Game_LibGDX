@@ -6,12 +6,12 @@ import com.mygdx.game.ElementManager;
 
 public abstract class Solid extends Particle {
 
-    public Solid(Vector2 pos) {
-        super(pos);
+    public Solid(int x, int y) {
+        super(x, y);
     }
 
     public Vector2 getNewPos(ArrayMap<Vector2> velMap) {
-        Vector2 oldPos = getPos();
+        Vector2 oldPos = new Vector2(x, y);
         Vector2 res = oldPos
                 .cpy()
                 .add(getVel())

@@ -61,39 +61,39 @@ public class ElementManager {
         }
     }
 
-    public void placeElement(Vector2 pos, Class<? extends Element> c) {
+    public void placeElement(int x, int y, Class<? extends Element> c) {
         if(elements.size < MAX_PARTICLES) {
-            if (boundsCheck(pos) && elementMap.get(pos) == null) {
+            if (boundsCheck(x, y) && elementMap.get(x, y) == null) {
                 Element e = null;
                 try {
-                    e = c.getConstructor(Vector2.class).newInstance(pos);
+                    e = c.getConstructor(int.class, int.class).newInstance(x, y);
                 } catch (InstantiationException | NoSuchMethodException |
                         IllegalAccessException | InvocationTargetException ex) {
                     ex.printStackTrace();
                     System.exit(-1);
                 }
-                elementMap.set(Coords.intX(pos), Coords.intY(pos), e);
+                elementMap.set(x, y, e);
                 elements.add(e);
             }
         }
     }
 
     // remove the Element at the given position if it is within bounds and is not a Block
-    public void clearElement(Vector2 pos) {
-        if(boundsCheck(pos)) {
-            Element e = elementMap.get(pos);
+    public void clearElement(int x, int y) {
+        if(boundsCheck(x, y)) {
+            Element e = elementMap.get(x, y);
             if(e != null && !(e instanceof Block)) {
-                elementMap.set(pos, null);
+                elementMap.set(x, y, null);
                 elements.remove(e);
             }
         }
     }
 
-    public void eraseElement(Vector2 pos) {
-        if(boundsCheck(pos)) {
-            Element e = elementMap.get(pos);
+    public void eraseElement(int x, int y) {
+        if(boundsCheck(x, y)) {
+            Element e = elementMap.get(x, y);
             if(e instanceof Block) {
-                elementMap.set(pos, null);
+                elementMap.set(x, y, null);
                 elements.remove(e);
             }
         }
@@ -105,17 +105,22 @@ public class ElementManager {
 
     public void reset() {
         // relies on each element storing its position, will probably have to change
-        for(Element e : elements) {
-            elementMap.set(e.getPos(), null);
+//        for(Element e : elements) {
+//            elementMap.set(e.getPos(), null);
+//        }
+        for(int y = 0; y < Y_RES; y++) {
+            for(int x = 0; x < X_RES; x++) {
+                elementMap.set(x, y, null);
+            }
         }
         elements.clear();
         makeBorder();
     }
 
     private void makeBorder() {
-        Consumer<Vector2> lineFn = p -> {
-            Block block = new Block(p);
-            elementMap.set(p, block);
+        BiIntConsumer lineFn = (x, y) -> {
+            Block block = new Block(x, y);
+            elementMap.set(x, y, block);
             elements.add(block);
         };
         int i = 0;

@@ -7,6 +7,8 @@ import com.mygdx.game.element.Powder;
 
 import java.util.Locale;
 import java.util.function.Consumer;
+import java.util.function.IntConsumer;
+
 
 import static com.mygdx.game.GameManager.boundsCheck;
 
@@ -20,7 +22,7 @@ public class PenManager implements InputProcessor {
     private Class<? extends Element> activeElement = Powder.class;
     private int penSize = 2;
     private PenType penType = PenType.FREE;
-    private Consumer<Vector2> penAction;
+    private BiIntConsumer penAction;
 
     public enum PenType {
         FREE, LINE;
@@ -37,7 +39,7 @@ public class PenManager implements InputProcessor {
         this.game = game;
     }
 
-    PenManager(GameManager game, Consumer<Vector2> penAction) {
+    PenManager(GameManager game, BiIntConsumer penAction) {
         this.game = game;
         this.penAction = penAction;
     }
@@ -52,11 +54,11 @@ public class PenManager implements InputProcessor {
     }
 
     // draw pen outline and line
-    public void draw(Consumer<Vector2> drawFn) {
+    public void draw(BiIntConsumer drawFn) {
         if(penType == PenType.LINE && placing) {
             Coords.line(lineStartX, lineStartY, mouseX, mouseY, 0, drawFn);
         }
-        Coords.circle(new Vector2(mouseX, mouseY), penSize, false, drawFn);
+        Coords.circle(mouseX, mouseY, penSize, false, drawFn);
     }
 
     public Class<? extends Element> getActiveElement() {
@@ -67,7 +69,7 @@ public class PenManager implements InputProcessor {
         activeElement = c;
     }
 
-    public void setPenAction(Consumer<Vector2> penAction) {
+    public void setPenAction(BiIntConsumer penAction) {
         this.penAction = penAction;
     }
 

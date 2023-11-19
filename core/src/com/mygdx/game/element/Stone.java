@@ -6,8 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 public class Stone extends Solid {
     private static final Color color = Color.LIGHT_GRAY;
 
-    public Stone(Vector2 pos) {
-        super(pos);
+    public Stone(int x, int y) {
+        super(x, y);
     }
 
     /**

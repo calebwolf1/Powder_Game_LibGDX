@@ -3,7 +3,7 @@ package com.mygdx.game.element;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.ArrayMap;
 import com.mygdx.game.GameManager;
-
+import com.mygdx.game.Position;
 
 
 public abstract class Particle extends Element {
@@ -20,8 +20,8 @@ public abstract class Particle extends Element {
      */
     public abstract Vector2 getNewPos(ArrayMap<Vector2> velMap);
 
-    public Particle(Vector2 pos) {
-        super(pos);
+    public Particle(int x, int y) {
+        super(x, y);
         vel = new Vector2();
     }
 
@@ -50,19 +50,21 @@ public abstract class Particle extends Element {
      */
     public boolean move(ArrayMap<Vector2> velocityMap, ArrayMap<Element> elementMap) {
         Vector2 newPos = getNewPos(velocityMap);
-        Vector2 obstruction = getObstruction(newPos, elementMap);
+        Position obstruction = getObstruction(newPos, elementMap);
         if(obstruction != null) {
             System.out.println("obstruction!");
-            return moveTo(obstruction, elementMap);
+            return moveTo(obstruction.x, obstruction.y, elementMap);
         }
 
         // no obstruction
 //        Vector2 velocity = newPos.cpy().sub(getPos());
-        Vector2 guaranteed = new Vector2(
-                getPos().x < newPos.x ? (float) Math.floor(newPos.x) : (float) Math.ceil(newPos.x),
-                getPos().y < newPos.y ? (float) Math.floor(newPos.y) : (float) Math.ceil(newPos.y));
-        Vector2 chance = newPos.cpy().sub(guaranteed);
-        newPos.set(guaranteed);  // guaranteed new position
+//        Vector2 guaranteed = new Vector2(
+//                x < newPos.x ? (float) Math.floor(newPos.x) : (float) Math.ceil(newPos.x),
+//                y < newPos.y ? (float) Math.floor(newPos.y) : (float) Math.ceil(newPos.y));
+        int guaranteedX = x < newPos.x ? (int) Math.floor(newPos.x) : (int) Math.ceil(newPos.x);
+        int guaranteedY = y < newPos.y ? (int) Math.floor(newPos.y) : (int) Math.ceil(newPos.y);
+        Vector2 chance = new Vector2(newPos.x - guaranteedX, newPos.y - guaranteedY);
+        newPos.set(guaranteedX, guaranteedY);  // guaranteed new position
         if(Math.abs(chance.x) > Math.abs(chance.y)) {
             addChanceX(newPos, chance, elementMap);
             addChanceY(newPos, chance, elementMap);
@@ -72,7 +74,7 @@ public abstract class Particle extends Element {
         }
 
 //        System.out.println(elementMap.get(newPos));  // should always be null
-        return moveTo(newPos, elementMap);
+        return moveTo((int) newPos.x, (int) newPos.y, elementMap);
     }
 
     private void addChanceX(Vector2 newPos, Vector2 chance, ArrayMap<Element> elementMap) {
@@ -102,13 +104,15 @@ public abstract class Particle extends Element {
     }
 
     // returns the spot 1 before the obstruction
-    private Vector2 getObstruction(Vector2 end, ArrayMap<Element> elementMap) {
+    private Position getObstruction(Vector2 end, ArrayMap<Element> elementMap) {
         // grid traversal algorithm
         // see: http://www.cse.yorku.ca/~amana/research/grid.pdf
         // if this is too slow, consider Bresenham's algorithm
-        Vector2 start = getPos();
-        int x = (int) Math.floor(start.x);
-        int y = (int) Math.floor(start.y);
+        Position start = new Position(x, y);
+//        int x = (int) Math.floor(start.x);
+//        int y = (int) Math.floor(start.y);
+        int x = start.x;
+        int y = start.y;
         float diffX = end.x - start.x;
         float diffY = end.y - start.y;
         int stepX = (int) Math.signum(diffX);
@@ -145,7 +149,7 @@ public abstract class Particle extends Element {
             }
             if(elementMap.get(x, y) != null) {
                 System.out.println("obstruction!");
-                return new Vector2(prevX, prevY);
+                return new Position(prevX, prevY);
             }
         }
 
@@ -156,12 +160,14 @@ public abstract class Particle extends Element {
     // removes it from the Element map
     // return true if the element stayed within bounds, false if it did not and was removed.
     // pre: the element map is empty at newPos
-    private boolean moveTo(Vector2 newPos, ArrayMap<Element> elementMap) {
+    private boolean moveTo(int newX, int newY, ArrayMap<Element> elementMap) {
 //        System.out.println(elementMap.get(newPos));
-        elementMap.set(getPos(), null); // set old position to null in the Element map
-        setPos(newPos);
-        if(GameManager.boundsCheck(getPos())) {
-            elementMap.set(newPos, this);
+        elementMap.set(x, y, null); // set old position to null in the Element map
+//        setPos(newPos);
+        x = newX;
+        y = newY;
+        if(GameManager.boundsCheck(x, y)) {
+            elementMap.set(newX, newY, this);
             return true;
         }
         return false;

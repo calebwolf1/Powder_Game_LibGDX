@@ -29,7 +29,7 @@ public class Coords {
     }
 
     public static void line(int x0, int y0, int x1, int y1,
-                                         int radius, Consumer<Vector2> lineFn) {
+                                         int radius, BiIntConsumer lineFn) {
         if(x0 == x1 && y0 == y1)
             return;
         if(Math.abs(y1 - y0) < Math.abs(x1 - x0)) {
@@ -48,7 +48,7 @@ public class Coords {
     }
 
     private static void getLineLow(int x0, int y0, int x1, int y1, int radius,
-                                             Consumer<Vector2> lineFn) {
+                                             BiIntConsumer lineFn) {
         // dx > dy
         int dx = x1 - x0;
         int dy = y1 - y0;
@@ -60,7 +60,7 @@ public class Coords {
         int D = (2 * dy) - dx;
 
         for(int x = x0, y = y0; x <= x1; x++) {
-            circle(new Vector2(x, y), radius, true, lineFn);
+            circle(x, y, radius, true, lineFn);
             if(D > 0) {
                 y += yi;
                 D += (2 * (dy - dx));
@@ -71,7 +71,7 @@ public class Coords {
     }
 
     private static void getLineHigh(int x0, int y0, int x1, int y1, int radius,
-                                              Consumer<Vector2> lineFn) {
+                                    BiIntConsumer lineFn) {
         // dy > dx
         int dx = x1 - x0;
         int dy = y1 - y0;
@@ -83,7 +83,7 @@ public class Coords {
         int D = (2 * dx) - dy;
 
         for(int y = y0, x = x0; y <= y1; y++) {
-            circle(new Vector2(x, y), radius, true, lineFn);
+            circle(x, y, radius, true, lineFn);
             if(D > 0) {
                 x += xi;
                 D += 2 * (dx - dy);
@@ -93,19 +93,19 @@ public class Coords {
         }
     }
 
-    public static void circle(Vector2 pos, int radius, boolean filled,
-                               Consumer<Vector2> circleFn) {
+    public static void circle(int x, int y, int radius, boolean filled,
+                               BiIntConsumer circleFn) {
         if(radius == 0) {
-            circleFn.accept(pos);
+            circleFn.accept(x, y);
             return;
         }
-        for(int y = -radius; y <= radius; y++) {
-            for(int x = -radius; x <= radius; x++) {
-                boolean check = x * x + y * y < radius * radius + radius;
+        for(int curY = -radius; curY <= radius; curY++) {
+            for(int curX = -radius; curX <= radius; curX++) {
+                boolean check = curX * curX + curY * curY < radius * radius + radius;
                 if(filled && check) {
-                    circleFn.accept(new Vector2(pos.x + x, pos.y + y));
-                } else if(!filled && check && x * x + y * y > radius * radius - radius) {
-                    circleFn.accept((new Vector2(pos.x + x, pos.y + y)));
+                    circleFn.accept(x + curX, y + curY);
+                } else if(!filled && check && curX * curX + curY * curY > radius * radius - radius) {
+                    circleFn.accept(x + curX, y + curY);
                 }
             }
         }

@@ -6,8 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 public class Powder extends Solid {
     private static final Color color = Color.YELLOW;
 
-    public Powder(Vector2 pos) {
-        super(pos);
+    public Powder(int x, int y) {
+        super(x, y);
     }
 
     /**
