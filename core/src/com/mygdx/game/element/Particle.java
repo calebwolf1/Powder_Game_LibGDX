@@ -9,7 +9,6 @@ import com.mygdx.game.Position;
 public abstract class Particle extends Element {
 
     private Vector2 vel;  // the velocity of this Particle
-    // possibly store int position
 
     /**
      * Calculates the farthest position this Particle can travel to if not obstructed. Based on
@@ -161,9 +160,7 @@ public abstract class Particle extends Element {
     // return true if the element stayed within bounds, false if it did not and was removed.
     // pre: the element map is empty at newPos
     private boolean moveTo(int newX, int newY, ArrayMap<Element> elementMap) {
-//        System.out.println(elementMap.get(newPos));
         elementMap.set(x, y, null); // set old position to null in the Element map
-//        setPos(newPos);
         x = newX;
         y = newY;
         if(GameManager.boundsCheck(x, y)) {

@@ -1,11 +1,9 @@
 package com.mygdx.game.element;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.RectDrawer;
 
 public abstract class Element {
-//    private Vector2 pos;
     protected int x, y;
 
     /**
@@ -22,14 +20,6 @@ public abstract class Element {
         this.x = x;
         this.y = y;
     }
-
-//    public Vector2 getPos() {
-//        return pos;
-//    }
-
-//    public void setPos(Vector2 newPos) {
-//        this.pos = newPos;
-//    }
 
     /**
      * Draws this Element at the given position

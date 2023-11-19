@@ -1,10 +1,6 @@
 package com.mygdx.game;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
-
-import java.util.function.Consumer;
 
 // Collection of static methods to translate between the three coordinate systems used by this
 // application: touch, screen, and simulation.
@@ -18,14 +14,6 @@ public class Coords {
     // get the y component of the given vector rounded to the nearest integer
     public static int intY(Vector2 v) {
         return Math.round(v.y);
-    }
-
-    public static float getX(Vector2 v) {
-        return v.x;
-    }
-
-    public static float getY(Vector2 v) {
-        return v.y;
     }
 
     public static void line(int x0, int y0, int x1, int y1,

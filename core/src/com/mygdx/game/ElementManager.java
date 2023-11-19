@@ -45,8 +45,6 @@ public class ElementManager {
         makeBorder();
     }
 
-    // private pos getObstruction(start, end)
-
     public void update(ArrayMap<Vector2> velocityMap) {
         // move particles
         Iterator<Element> it = elements.iterator();

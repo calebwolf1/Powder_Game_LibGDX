@@ -6,11 +6,6 @@ import com.mygdx.game.element.Element;
 import com.mygdx.game.element.Powder;
 
 import java.util.Locale;
-import java.util.function.Consumer;
-import java.util.function.IntConsumer;
-
-
-import static com.mygdx.game.GameManager.boundsCheck;
 
 public class PenManager implements InputProcessor {
     private GameManager game;
