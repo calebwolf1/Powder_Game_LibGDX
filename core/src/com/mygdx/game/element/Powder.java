@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Powder extends Solid {
     private static final Color color = Color.YELLOW;
+    private static final double density = 0.05;
 
     public Powder(int x, int y) {
         super(x, y);
@@ -22,5 +23,9 @@ public class Powder extends Solid {
     @Override
     public Color getColor() {
         return color;
+    }
+
+    protected double getDensity() {
+        return density;
     }
 }

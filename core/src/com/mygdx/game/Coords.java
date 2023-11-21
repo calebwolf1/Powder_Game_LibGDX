@@ -18,8 +18,6 @@ public class Coords {
 
     public static void line(int x0, int y0, int x1, int y1,
                                          int radius, BiIntConsumer lineFn) {
-        if(x0 == x1 && y0 == y1)
-            return;
         if(Math.abs(y1 - y0) < Math.abs(x1 - x0)) {
             if(x0 < x1) {
                 getLineLow(x0, y0, x1, y1, radius, lineFn);

@@ -25,7 +25,7 @@ public class ElementManager {
     private static final Array<Class<? extends Element>> P_TYPES;
 
     // data structures
-    private ArrayMap<Element> elementMap;  // map of on-screen Elements in each game position
+    private ElementMap elementMap;  // map of on-screen Elements in each game position
     private ObjectSet<Element> elements; // set of Elements in the game
 
     static {
@@ -40,7 +40,7 @@ public class ElementManager {
     }
 
     public ElementManager() {
-        elementMap = new ArrayMap<>(X_RES, Y_RES);
+        elementMap = new ElementMap(X_RES, Y_RES);
         elements = new ObjectSet<>(MAX_PARTICLES);
         makeBorder();
     }
@@ -52,7 +52,7 @@ public class ElementManager {
             Element e = it.next();
             if(e instanceof Particle) {
                 Particle p = (Particle) e;
-                if(!p.move(velocityMap, elementMap)) {
+                if(!p.move(elementMap)) {
                     it.remove();
                 }
             }
@@ -61,7 +61,7 @@ public class ElementManager {
 
     public void placeElement(int x, int y, Class<? extends Element> c) {
         if(elements.size < MAX_PARTICLES) {
-            if (boundsCheck(x, y) && elementMap.get(x, y) == null) {
+            if (boundsCheck(x, y) && elementMap.isEmpty(x, y)) {
                 Element e = null;
                 try {
                     e = c.getConstructor(int.class, int.class).newInstance(x, y);

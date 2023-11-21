@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Stone extends Solid {
     private static final Color color = Color.LIGHT_GRAY;
+    private static final double density = 0.2;
 
     public Stone(int x, int y) {
         super(x, y);
@@ -22,5 +23,9 @@ public class Stone extends Solid {
     @Override
     public Color getColor() {
         return color;
+    }
+
+    protected double getDensity() {
+        return density;
     }
 }

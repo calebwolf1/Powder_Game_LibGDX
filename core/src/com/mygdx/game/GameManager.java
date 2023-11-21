@@ -67,14 +67,14 @@ public class GameManager extends ApplicationAdapter {
 		BiIntConsumer drawRedRect = (x, y) -> shape.drawRect(x, y, 1, 1, Color.RED);
 		shape.drawRect(0, 0, X_RES, Y_RES, Color.BLACK);
 		// draw pressure and velocity of each cell of fluid manager first
-		fluidManager.applyPressureFn(((xPos, yPos, p) ->
-				shape.drawRect(xPos * PARTS_PER_FLUID, yPos * PARTS_PER_FLUID, PARTS_PER_FLUID,
-						PARTS_PER_FLUID, getPressureColor(p))));
-		fluidManager.applyVelocityFn(((xPos, yPos, vx, vy) ->
-				Coords.line(xPos * PARTS_PER_FLUID, yPos * PARTS_PER_FLUID,
-						xPos * PARTS_PER_FLUID + Math.round(vx) * PARTS_PER_FLUID,
-						yPos * PARTS_PER_FLUID + Math.round(vy) * PARTS_PER_FLUID, 0,
-				drawRedRect)));
+//		fluidManager.applyPressureFn(((xPos, yPos, p) ->
+//				shape.drawRect(xPos * PARTS_PER_FLUID, yPos * PARTS_PER_FLUID, PARTS_PER_FLUID,
+//						PARTS_PER_FLUID, getPressureColor(p))));
+//		fluidManager.applyVelocityFn(((xPos, yPos, vx, vy) ->
+//				Coords.line(xPos * PARTS_PER_FLUID, yPos * PARTS_PER_FLUID,
+//						xPos * PARTS_PER_FLUID + Math.round(vx) * PARTS_PER_FLUID,
+//						yPos * PARTS_PER_FLUID + Math.round(vy) * PARTS_PER_FLUID, 0,
+//				drawRedRect)));
 
 		// draw elements
 		elementManager.forEachElement(e -> e.draw(shape));

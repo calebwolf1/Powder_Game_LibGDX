@@ -2,12 +2,14 @@ package com.mygdx.game.element;
 
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.ArrayMap;
+import com.mygdx.game.ElementMap;
 import com.mygdx.game.GameManager;
 import com.mygdx.game.Position;
 
 
 public abstract class Particle extends Element {
 
+    protected boolean ready;
     private Vector2 vel;  // the velocity of this Particle
 
     /**
@@ -18,6 +20,8 @@ public abstract class Particle extends Element {
      * @return the distance this Particle should travel without obstructions.
      */
     public abstract Vector2 getNewPos(ArrayMap<Vector2> velMap);
+
+    protected abstract double getDensity();
 
     public Particle(int x, int y) {
         super(x, y);
@@ -36,6 +40,12 @@ public abstract class Particle extends Element {
     public void interact() {
 
     }
+
+    public void applyForce(Vector2 f, ElementMap elementMap) {
+
+    }
+
+    public abstract boolean move(ElementMap elementMap);
 
     /**
      * Move this Particle to one before the calculated new position and use the remaining vector’s
@@ -151,7 +161,7 @@ public abstract class Particle extends Element {
                 return new Position(prevX, prevY);
             }
         }
-
+        System.out.println("hi 2");
         return null;
     }
 
