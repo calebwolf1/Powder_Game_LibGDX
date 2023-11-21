@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 
 public class Powder extends Solid {
-    private static final Color color = Color.YELLOW;
+    private static final Color color = new Color(0xF2BD6B00);
     private static final double density = 0.05;
 
     public Powder(int x, int y) {

@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 
 public class Stone extends Solid {
-    private static final Color color = Color.LIGHT_GRAY;
+    private static final Color color = new Color(0x80808000);
     private static final double density = 0.2;
 
     public Stone(int x, int y) {

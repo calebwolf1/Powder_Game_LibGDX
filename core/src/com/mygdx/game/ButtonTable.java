@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 
 // Defines functionality for making a Button table and adding buttons to it
 public class ButtonTable {
-    private static final float FONT_SCALE = 0.75f;
+    private static final float FONT_SCALE = 0.5f;
     private static final float PAD_COEFF = 0.08f;
     private float totalWidth, totalHeight;
     private Table table;

@@ -45,6 +45,27 @@ public abstract class Particle extends Element {
 
     }
 
+    // true if stayed in bounds, false if not and was removed
+    public boolean applyGravity(ElementMap elementMap) {
+        if(!ready) {
+            if(Math.random() < getDensity()) {
+                ready = true;
+            }
+        }
+        if(ready) {
+            if(y == elementMap.getHeight() - 1) {
+                elementMap.remove(x, y);
+                return false;
+            }
+            if (elementMap.isEmpty(x, y + 1)) {
+                elementMap.swap(x, y, x, y + 1);
+                y++;
+                ready = false;
+            }
+        }
+        return true;
+    }
+
     public abstract boolean move(ElementMap elementMap);
 
     /**
