@@ -2,7 +2,6 @@ package com.mygdx.game.element;
 
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.ArrayMap;
-import com.mygdx.game.ElementMap;
 import com.mygdx.game.GameManager;
 import com.mygdx.game.Position;
 
@@ -57,9 +56,7 @@ public abstract class Particle extends Element {
                 elementMap.remove(x, y);
                 return false;
             }
-            if (elementMap.isEmpty(x, y + 1)) {
-                elementMap.swap(x, y, x, y + 1);
-                y++;
+            if(elementMap.moveIfEmpty(x, y, x, y + 1)) {
                 ready = false;
             }
         }

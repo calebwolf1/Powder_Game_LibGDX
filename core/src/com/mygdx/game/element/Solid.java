@@ -3,7 +3,6 @@ package com.mygdx.game.element;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.ArrayMap;
 import com.mygdx.game.ElementManager;
-import com.mygdx.game.ElementMap;
 
 public abstract class Solid extends Particle {
 
@@ -13,7 +12,19 @@ public abstract class Solid extends Particle {
 
     // true if stayed in bounds, false if not and was removed
     public boolean move(ElementMap elementMap) {
-        return applyGravity(elementMap);
+        return applyGravity(elementMap) &&
+                applySwap(elementMap);
+    }
+
+    public boolean applySwap(ElementMap elementMap) {
+        if(y < elementMap.getWidth() - 1) {
+            if(elementMap.isLiquid(x, y + 1)) {
+                if(Math.random() < getDensity() / 2) {
+                    elementMap.swap(x, y, x, y + 1);
+                }
+            }
+        }
+        return true;
     }
 
     public Vector2 getNewPos(ArrayMap<Vector2> velMap) {

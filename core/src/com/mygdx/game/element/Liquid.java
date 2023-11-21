@@ -2,7 +2,6 @@ package com.mygdx.game.element;
 
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.ArrayMap;
-import com.mygdx.game.ElementMap;
 
 public abstract class Liquid extends Particle {
 
@@ -28,11 +27,14 @@ public abstract class Liquid extends Particle {
 
     @Override
     public boolean move(ElementMap elementMap) {
-        if(!applyGravity(elementMap)) {
-            return false;
-        }
-        return applyDispersion(elementMap);
+        return  applyGravity(elementMap) &&
+                applyDispersion(elementMap);
     }
+
+//    public boolean applySwap(ElementMap elementMap) {
+//        if()
+//        return true;
+//    }
 
     public boolean applyDispersion(ElementMap elementMap) {
         int dx = Math.random() < getDispersionRate() ? 1 : 0;
@@ -49,11 +51,7 @@ public abstract class Liquid extends Particle {
                 return false;
             }
             if(!elementMap.moveIfEmpty(x, y, x + dx, y)) {
-                if(elementMap.moveIfEmpty(x, y, x - dx, y)) {
-                    x -= dx;
-                }
-            } else {
-                x += dx;
+                elementMap.moveIfEmpty(x, y, x - dx, y);
             }
         }
         return true;
