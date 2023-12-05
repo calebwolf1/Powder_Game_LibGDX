@@ -4,8 +4,8 @@ import com.badlogic.gdx.graphics.Color;
 
 public class Water extends Liquid {
     private static final Color color = new Color(0x4040FF00);
-    private static final double density = 0.15;
-    private static final double dispersionRate = 0.3;
+    private static final float density = 0.4f;
+    private static final float dispersionRate = 0.3f;
 
     public Water(int x, int y) {
         super(x, y);
@@ -15,11 +15,11 @@ public class Water extends Liquid {
         return color;
     }
 
-    public double getDensity() {
+    public float getDensity() {
         return density;
     }
 
-    public double getDispersionRate() {
+    public float getDispersionRate() {
         return dispersionRate;
     }
 }

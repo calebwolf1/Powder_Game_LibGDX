@@ -19,7 +19,7 @@ import static com.mygdx.game.GameManager.boundsCheck;
 
 public class ElementManager {
     // constants
-    public static final int X_RES = 300, Y_RES = 200;  // dimensions of game area
+//    public static final int X_RES = 300, Y_RES = 200;  // dimensions of game area
     private static final int MAX_PARTICLES = 20_000;
     private static final int BORDER_WIDTH = 2;
     public static final Vector2 G = new Vector2(0, 0.7f);
@@ -40,8 +40,8 @@ public class ElementManager {
         }
     }
 
-    public ElementManager() {
-        elementMap = new ElementMap(X_RES, Y_RES);
+    public ElementManager(int xRes, int yRes) {
+        elementMap = new ElementMap(xRes, yRes);
         elements = new ObjectSet<>(MAX_PARTICLES);
         makeBorder();
     }
@@ -103,8 +103,8 @@ public class ElementManager {
     }
 
     public void reset() {
-        for(int y = 0; y < Y_RES; y++) {
-            for(int x = 0; x < X_RES; x++) {
+        for(int y = 0; y < elementMap.getHeight(); y++) {
+            for(int x = 0; x < elementMap.getWidth(); x++) {
                 elementMap.set(x, y, null);
             }
         }
@@ -117,8 +117,8 @@ public class ElementManager {
 
         int i = 0;
         while(i < BORDER_WIDTH) {
-            int yLim = Y_RES - 1 - i;
-            int xLim = X_RES - 1 - i;
+            int yLim = elementMap.getHeight() - 1 - i;
+            int xLim = elementMap.getWidth() - 1 - i;
             Coords.line(i, i, i, yLim, 0, lineFn);  // left
             Coords.line(xLim, i, xLim, yLim, 0, lineFn);  // right
             Coords.line(i, i, xLim, i, 0, lineFn);  // top

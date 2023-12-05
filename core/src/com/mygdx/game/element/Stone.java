@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Stone extends Solid {
     private static final Color color = new Color(0x80808000);
-    private static final double density = 0.2;
+    private static final float density = 0.5f;
 
     public Stone(int x, int y) {
         super(x, y);
@@ -25,7 +25,7 @@ public class Stone extends Solid {
         return color;
     }
 
-    protected double getDensity() {
+    protected float getDensity() {
         return density;
     }
 }

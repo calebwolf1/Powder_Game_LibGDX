@@ -2,14 +2,17 @@ package com.mygdx.game.element;
 
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.ArrayMap;
+import com.mygdx.game.Coords;
 
 public abstract class Liquid extends Particle {
+
+    private float dispersion;
 
     public Liquid(int x, int y) {
         super(x, y);
     }
 
-    public abstract double getDispersionRate();
+    public abstract float getDispersionRate();
 
     /**
      * Calculates the farthest position this Particle can travel to if not obstructed. Based on
@@ -27,33 +30,37 @@ public abstract class Liquid extends Particle {
 
     @Override
     public boolean move(ElementMap elementMap) {
-        return  applyGravity(elementMap) &&
-                applyDispersion(elementMap);
+        return applyGravity(elementMap)
+//                && applyVelocity(elementMap)
+                && applyDispersion(elementMap);
     }
 
-//    public boolean applySwap(ElementMap elementMap) {
-//        if()
-//        return true;
-//    }
-
     public boolean applyDispersion(ElementMap elementMap) {
-        int dx = Math.random() < getDispersionRate() ? 1 : 0;
-        if(dx != 0) {
-            dx *= Math.random() < 0.5 ? 1 : -1;
-            if(x == elementMap.getWidth() - 1 && dx == 1) {
-                // going to move off the right side of map
-                elementMap.remove(x, y);
-                return false;
+        // calculate dispersion
+        boolean canGoLeft = elementMap.isEmpty(x - 1, y);
+        boolean canGoRight = elementMap.isEmpty(x + 1, y);
+        if((canGoLeft || canGoRight) && !elementMap.isEmpty(x, y + 1)) {
+            float v = Coords.randFloat() / 2;
+            if(canGoLeft && !canGoRight) {  // can only go left, negative vel
+                dispersion -= v;
+            } else if(!canGoLeft) {  // can only go right, positive vel
+                dispersion += v;
+            } else if(Coords.randBool(getDispersionRate())) {  // can go either direction, choose
+                dispersion += Coords.coinToss() ? v : -v;
             }
-            if(x == 0 && dx == -1) {
-                // going to move off the left side of map
-                elementMap.remove(x, y);
-                return false;
-            }
-            if(!elementMap.moveIfEmpty(x, y, x + dx, y)) {
-                elementMap.moveIfEmpty(x, y, x - dx, y);
-            }
+        }
+
+        // apply dispersion
+        // TODO: 12/5/2023 refactor
+        if(dispersion < 0 && elementMap.isEmpty(x - 1, y) && Coords.randBool(dispersion * -1)) {
+            dispersion /= 1.5;
+            return elementMap.moveLeft(x, y);
+        } else if(dispersion > 0 && elementMap.isEmpty(x + 1, y) && Coords.randBool(dispersion * 1)) {
+            dispersion /= 1.5;
+            return elementMap.moveRight(x, y);
         }
         return true;
     }
+
+
 }

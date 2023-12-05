@@ -2,6 +2,7 @@ package com.mygdx.game.element;
 
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.ArrayMap;
+import com.mygdx.game.Coords;
 import com.mygdx.game.GameManager;
 import com.mygdx.game.Position;
 
@@ -9,7 +10,7 @@ import com.mygdx.game.Position;
 public abstract class Particle extends Element {
 
     protected boolean ready;
-    private Vector2 vel;  // the velocity of this Particle
+    protected Vector2 vel;  // the velocity of this Particle
 
     /**
      * Calculates the farthest position this Particle can travel to if not obstructed. Based on
@@ -20,7 +21,7 @@ public abstract class Particle extends Element {
      */
     public abstract Vector2 getNewPos(ArrayMap<Vector2> velMap);
 
-    protected abstract double getDensity();
+    protected abstract float getDensity();
 
     public Particle(int x, int y) {
         super(x, y);
@@ -44,20 +45,41 @@ public abstract class Particle extends Element {
 
     }
 
+    public boolean applyVelocity(ElementMap elementMap) {
+        if(vel.x < 0) {
+            // move left
+            if(!elementMap.isEmpty(x - 1, y)) {
+                vel.x = 0;
+            } else if(Coords.randBool(vel.x * -1)) {
+                // left is empty
+                vel.x /= 2;
+                return elementMap.moveLeft(x, y);
+            }
+        } else {
+            // move right
+            if(!elementMap.isEmpty(x + 1, y)) {
+                vel.x = 0;
+            } else if(Coords.randBool(vel.x)) {
+                // right is empty
+                vel.x /= 2;
+                return elementMap.moveRight(x, y);
+            }
+        }
+        return true;
+    }
+
     // true if stayed in bounds, false if not and was removed
     public boolean applyGravity(ElementMap elementMap) {
         if(!ready) {
-            if(Math.random() < getDensity()) {
+            if(Coords.randBool(getDensity())) {
                 ready = true;
             }
         }
         if(ready) {
-            if(y == elementMap.getHeight() - 1) {
-                elementMap.remove(x, y);
-                return false;
-            }
-            if(elementMap.moveIfEmpty(x, y, x, y + 1)) {
+            if(elementMap.isEmpty(x, y + 1)) {
                 ready = false;
+                boolean res = elementMap.moveDown(x, y);
+                return res;
             }
         }
         return true;

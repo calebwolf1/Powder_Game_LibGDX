@@ -5,6 +5,19 @@ import com.badlogic.gdx.math.Vector2;
 // Collection of static methods to translate between the three coordinate systems used by this
 // application: touch, screen, and simulation.
 public class Coords {
+    // move to another class, possibly make new folder for both
+    // TODO: 12/4/2023 make faster
+    public static boolean randBool(float p) {
+        return Math.random() < p;
+    }
+
+    public static boolean coinToss() {
+        return randBool(0.5f);
+    }
+
+    public static float randFloat() {
+        return (float) Math.random();
+    }
 
     // get the x component of the given vector rounded to the nearest integer
     public static int intX(Vector2 v) {

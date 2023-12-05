@@ -10,11 +10,13 @@ public class GameManager extends ApplicationAdapter {
 	// possible optimization: store Element positions as longs composed of two ints
 	// constants
 	private static final float T_PROP = 0.75f; // proportion of game screen taken up by top layer
-	public static final int X_RES = 300, Y_RES = 200;  // dimensions of game area
-	private static final float CONTROL_WIDTH = 300;
+	public static final int X_RES = 400, Y_RES = 300;  // dimensions of game area
+//	private static final float CONTROL_WIDTH = 400;
 	private static final float CONTROL_HEIGHT = Y_RES / T_PROP - Y_RES;
 	private static final int PARTS_PER_FLUID = 4;  // size of a fluid cell, in Particles
 	private static final float MAX_PRESSURE = 2f;
+
+	private boolean paused;
 
 	// components
 	private FluidManager2 fluidManager;
@@ -31,10 +33,10 @@ public class GameManager extends ApplicationAdapter {
 //		fluidManager = new FluidManager2(X_RES / PARTS_PER_FLUID, Y_RES / PARTS_PER_FLUID);
 		fluidManager = new FluidManager2(X_RES, Y_RES);
 		shape = new RectDrawer();
-		elementManager = new ElementManager();
-		buttonTable = new ButtonTable(CONTROL_WIDTH, CONTROL_HEIGHT);
+		elementManager = new ElementManager(X_RES, Y_RES);
+		buttonTable = new ButtonTable(X_RES, CONTROL_HEIGHT);
 		gameViewport = new LayeredFitViewport(X_RES, Y_RES, T_PROP, true, true);
-		controlStage = new Stage(new LayeredFitViewport(CONTROL_WIDTH, CONTROL_HEIGHT,
+		controlStage = new Stage(new LayeredFitViewport(X_RES, CONTROL_HEIGHT,
 				1 - T_PROP, false));
 
 		addButtons();
@@ -49,13 +51,15 @@ public class GameManager extends ApplicationAdapter {
 
 	// computes updates to game state not directly caused by events every frame
 	private void update() {
-		fluidManager.step(1);
-
 		// place elements
 		penManager.act();
 
-		// move particles
-		elementManager.update(fluidManager.getVelocityMap());
+		if(!paused) {
+			fluidManager.step(1);
+
+			// move particles
+			elementManager.update(fluidManager.getVelocityMap());
+		}
 	}
 
 	// updates graphics every frame
@@ -149,6 +153,25 @@ public class GameManager extends ApplicationAdapter {
 		buttonTable.addTextButton("Reset", b -> {
 			// relies on each element storing its position, will probably have to change
 			elementManager.reset();
+		});
+
+		// pause
+		buttonTable.addTextButton(paused ? "Unpause" : "Pause", b -> {
+			if(paused) {
+				paused = false;
+				b.setText("Pause");
+			} else {
+				paused = true;
+				b.setText("Unpause");
+			}
+		});
+
+		// step
+		buttonTable.addTextButton("Step", b -> {
+			if(paused) {
+
+				elementManager.update(fluidManager.getVelocityMap());
+			}
 		});
 	}
 
