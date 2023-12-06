@@ -12,15 +12,15 @@ public abstract class Solid extends Particle {
     }
 
     // true if stayed in bounds, false if not and was removed
-    public boolean move(ElementMap elementMap) {
-        return applyGravity(elementMap)
-                && applySwap(elementMap);
+    public boolean move(Neighborhood neighbors) {
+        return applyGravity(neighbors)
+                && applySwap(neighbors);
     }
 
-    public boolean applySwap(ElementMap elementMap) {
-        if(elementMap.isLiquid(x, y + 1)) {
+    public boolean applySwap(Neighborhood neighbors) {
+        if(neighbors.isLiquid(Neighborhood.Dir.DOWN)) {
             if(Coords.randBool(getDensity() / 2)) {
-                elementMap.swap(x, y, x, y + 1);
+                neighbors.swap(Neighborhood.Dir.DOWN);
             }
         }
         return true;

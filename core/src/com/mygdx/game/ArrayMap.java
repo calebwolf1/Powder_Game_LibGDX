@@ -29,4 +29,8 @@ public class ArrayMap<E> {
     public void set(int posX, int posY, E val) {
         con[posY][posX] = val;
     }
+
+    public boolean isEmpty(int x, int y) {
+        return con[y][x] == null;
+    }
 }

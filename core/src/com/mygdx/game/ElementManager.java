@@ -3,10 +3,7 @@ package com.mygdx.game;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectSet;
-import com.mygdx.game.element.Block;
-import com.mygdx.game.element.Element;
-import com.mygdx.game.element.ElementMap;
-import com.mygdx.game.element.Particle;
+import com.mygdx.game.element.*;
 import org.reflections.Reflections;
 
 import java.lang.reflect.InvocationTargetException;
@@ -26,7 +23,7 @@ public class ElementManager {
     private static final Array<Class<? extends Element>> P_TYPES;
 
     // data structures
-    private ElementMap elementMap;  // map of on-screen Elements in each game position
+    private ArrayMap<Element> elementMap;  // map of on-screen Elements in each game position
     private ObjectSet<Element> elements; // set of Elements in the game
 
     static {
@@ -41,7 +38,7 @@ public class ElementManager {
     }
 
     public ElementManager(int xRes, int yRes) {
-        elementMap = new ElementMap(xRes, yRes);
+        elementMap = new ArrayMap<>(xRes, yRes);
         elements = new ObjectSet<>(MAX_PARTICLES);
         makeBorder();
     }
@@ -53,7 +50,7 @@ public class ElementManager {
             Element e = it.next();
             if(e instanceof Particle) {
                 Particle p = (Particle) e;
-                if(!p.move(elementMap)) {
+                if(!p.move(new Neighborhood(elementMap, p))) {
                     it.remove();
                 }
             }
@@ -103,8 +100,8 @@ public class ElementManager {
     }
 
     public void reset() {
-        for(int y = 0; y < elementMap.getHeight(); y++) {
-            for(int x = 0; x < elementMap.getWidth(); x++) {
+        for(int y = 0; y < elementMap.height; y++) {
+            for(int x = 0; x < elementMap.width; x++) {
                 elementMap.set(x, y, null);
             }
         }
@@ -117,8 +114,8 @@ public class ElementManager {
 
         int i = 0;
         while(i < BORDER_WIDTH) {
-            int yLim = elementMap.getHeight() - 1 - i;
-            int xLim = elementMap.getWidth() - 1 - i;
+            int yLim = elementMap.height - 1 - i;
+            int xLim = elementMap.width - 1 - i;
             Coords.line(i, i, i, yLim, 0, lineFn);  // left
             Coords.line(xLim, i, xLim, yLim, 0, lineFn);  // right
             Coords.line(i, i, xLim, i, 0, lineFn);  // top

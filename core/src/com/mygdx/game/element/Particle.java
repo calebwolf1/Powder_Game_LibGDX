@@ -41,51 +41,46 @@ public abstract class Particle extends Element {
 
     }
 
-    public void applyForce(Vector2 f, ElementMap elementMap) {
-
-    }
-
-    public boolean applyVelocity(ElementMap elementMap) {
-        if(vel.x < 0) {
-            // move left
-            if(!elementMap.isEmpty(x - 1, y)) {
-                vel.x = 0;
-            } else if(Coords.randBool(vel.x * -1)) {
-                // left is empty
-                vel.x /= 2;
-                return elementMap.moveLeft(x, y);
-            }
-        } else {
-            // move right
-            if(!elementMap.isEmpty(x + 1, y)) {
-                vel.x = 0;
-            } else if(Coords.randBool(vel.x)) {
-                // right is empty
-                vel.x /= 2;
-                return elementMap.moveRight(x, y);
-            }
-        }
-        return true;
-    }
+//    public boolean applyVelocity(ElementMap elementMap) {
+//        if(vel.x < 0) {
+//            // move left
+//            if(!elementMap.isEmpty(x - 1, y)) {
+//                vel.x = 0;
+//            } else if(Coords.randBool(vel.x * -1)) {
+//                // left is empty
+//                vel.x /= 2;
+//                return elementMap.moveLeft(x, y);
+//            }
+//        } else {
+//            // move right
+//            if(!elementMap.isEmpty(x + 1, y)) {
+//                vel.x = 0;
+//            } else if(Coords.randBool(vel.x)) {
+//                // right is empty
+//                vel.x /= 2;
+//                return elementMap.moveRight(x, y);
+//            }
+//        }
+//        return true;
+//    }
 
     // true if stayed in bounds, false if not and was removed
-    public boolean applyGravity(ElementMap elementMap) {
+    public boolean applyGravity(Neighborhood neighbors) {
         if(!ready) {
             if(Coords.randBool(getDensity())) {
                 ready = true;
             }
         }
         if(ready) {
-            if(elementMap.isEmpty(x, y + 1)) {
+            if(neighbors.isEmpty(Neighborhood.Dir.DOWN)) {
                 ready = false;
-                boolean res = elementMap.moveDown(x, y);
-                return res;
+                return neighbors.move(Neighborhood.Dir.DOWN);
             }
         }
         return true;
     }
 
-    public abstract boolean move(ElementMap elementMap);
+    public abstract boolean move(Neighborhood neighbors);
 
     /**
      * Move this Particle to one before the calculated new position and use the remaining vector’s

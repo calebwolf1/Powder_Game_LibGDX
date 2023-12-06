@@ -29,17 +29,17 @@ public abstract class Liquid extends Particle {
     }
 
     @Override
-    public boolean move(ElementMap elementMap) {
-        return applyGravity(elementMap)
+    public boolean move(Neighborhood neighbors) {
+        return applyGravity(neighbors)
 //                && applyVelocity(elementMap)
-                && applyDispersion(elementMap);
+                && applyDispersion(neighbors);
     }
 
-    public boolean applyDispersion(ElementMap elementMap) {
+    public boolean applyDispersion(Neighborhood neighbors) {
         // calculate dispersion
-        boolean canGoLeft = elementMap.isEmpty(x - 1, y);
-        boolean canGoRight = elementMap.isEmpty(x + 1, y);
-        if((canGoLeft || canGoRight) && !elementMap.isEmpty(x, y + 1)) {
+        boolean canGoLeft = neighbors.isEmpty(Neighborhood.Dir.LEFT);
+        boolean canGoRight = neighbors.isEmpty(Neighborhood.Dir.RIGHT);
+        if((canGoLeft || canGoRight) && !neighbors.isEmpty(Neighborhood.Dir.DOWN)) {
             float v = Coords.randFloat() / 2;
             if(canGoLeft && !canGoRight) {  // can only go left, negative vel
                 dispersion -= v;
@@ -52,12 +52,12 @@ public abstract class Liquid extends Particle {
 
         // apply dispersion
         // TODO: 12/5/2023 refactor
-        if(dispersion < 0 && elementMap.isEmpty(x - 1, y) && Coords.randBool(dispersion * -1)) {
+        if(dispersion < 0 && neighbors.isEmpty(Neighborhood.Dir.LEFT) && Coords.randBool(dispersion * -1)) {
             dispersion /= 1.5;
-            return elementMap.moveLeft(x, y);
-        } else if(dispersion > 0 && elementMap.isEmpty(x + 1, y) && Coords.randBool(dispersion * 1)) {
+            return neighbors.move(Neighborhood.Dir.LEFT);
+        } else if(dispersion > 0 && neighbors.isEmpty(Neighborhood.Dir.RIGHT) && Coords.randBool(dispersion * 1)) {
             dispersion /= 1.5;
-            return elementMap.moveRight(x, y);
+            return neighbors.move(Neighborhood.Dir.RIGHT);
         }
         return true;
     }
