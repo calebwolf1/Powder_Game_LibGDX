@@ -51,16 +51,21 @@ public abstract class Liquid extends Particle {
         }
 
         // apply dispersion
-        // TODO: 12/5/2023 refactor
-        if(dispersion < 0 && neighbors.isEmpty(Neighborhood.Dir.LEFT) && Coords.randBool(dispersion * -1)) {
-            dispersion /= 1.5;
-            return neighbors.move(Neighborhood.Dir.LEFT);
-        } else if(dispersion > 0 && neighbors.isEmpty(Neighborhood.Dir.RIGHT) && Coords.randBool(dispersion * 1)) {
-            dispersion /= 1.5;
-            return neighbors.move(Neighborhood.Dir.RIGHT);
+        if(shouldDisperse(neighbors, Neighborhood.Dir.LEFT)) {
+            return dispersionDirection(neighbors, Neighborhood.Dir.LEFT);
+        } else if(shouldDisperse(neighbors, Neighborhood.Dir.RIGHT)) {
+            return dispersionDirection(neighbors, Neighborhood.Dir.RIGHT);
         }
         return true;
     }
 
+    private boolean shouldDisperse(Neighborhood neighbors, Neighborhood.Dir d) {
+        return dispersion * d.dx > 0 && neighbors.isEmpty(d) && Coords.randBool(dispersion * d.dx);
+    }
+
+    private boolean dispersionDirection(Neighborhood neighbors, Neighborhood.Dir d) {
+        dispersion /= 1.5;
+        return neighbors.move(d);
+    }
 
 }
