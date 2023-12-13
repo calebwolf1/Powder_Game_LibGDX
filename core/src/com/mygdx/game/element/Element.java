@@ -23,7 +23,7 @@ public abstract class Element {
 
     /**
      * Draws this Element at the given position
-     * @param pos The position of this Element in simulation coordinates
+     * @param shape The position of this Element in simulation coordinates
      */
     public void draw(RectDrawer shape) {
         shape.drawRect(x, y, 1, 1, getColor());
