@@ -2,7 +2,9 @@ package com.mygdx.game.element;
 
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.ArrayMap;
-import com.mygdx.game.Coords;
+import com.mygdx.game.element.Neighborhood.Dir;
+import com.mygdx.game.utils.Random;
+
 
 public abstract class Liquid extends Particle {
 
@@ -20,7 +22,7 @@ public abstract class Liquid extends Particle {
      * Defined in Solid, Liquid, and Gas, but can be overridden if a Particle has a different
      * movement pattern.
      *
-     * @param velMap
+     * @param velMap the velocity map
      * @return the distance this Particle should travel without obstructions.
      */
     @Override
@@ -37,33 +39,33 @@ public abstract class Liquid extends Particle {
 
     public boolean applyDispersion(Neighborhood neighbors) {
         // calculate dispersion
-        boolean canGoLeft = neighbors.isEmpty(Neighborhood.Dir.LEFT);
-        boolean canGoRight = neighbors.isEmpty(Neighborhood.Dir.RIGHT);
-        if((canGoLeft || canGoRight) && !neighbors.isEmpty(Neighborhood.Dir.DOWN)) {
-            float v = Coords.randFloat() / 2;
+        boolean canGoLeft = neighbors.isEmpty(Dir.LEFT);
+        boolean canGoRight = neighbors.isEmpty(Dir.RIGHT);
+        if((canGoLeft || canGoRight) && !neighbors.isEmpty(Dir.DOWN)) {
+            float v = Random.randFloat() / 2;
             if(canGoLeft && !canGoRight) {  // can only go left, negative vel
                 dispersion -= v;
             } else if(!canGoLeft) {  // can only go right, positive vel
                 dispersion += v;
-            } else if(Coords.randBool(getDispersionRate())) {  // can go either direction, choose
-                dispersion += Coords.coinToss() ? v : -v;
+            } else if(Random.randBool(getDispersionRate())) {  // can go either direction, choose
+                dispersion += Random.coinToss() ? v : -v;
             }
         }
 
         // apply dispersion
-        if(shouldDisperse(neighbors, Neighborhood.Dir.LEFT)) {
-            return dispersionDirection(neighbors, Neighborhood.Dir.LEFT);
-        } else if(shouldDisperse(neighbors, Neighborhood.Dir.RIGHT)) {
-            return dispersionDirection(neighbors, Neighborhood.Dir.RIGHT);
+        if(shouldDisperse(neighbors, Dir.LEFT)) {
+            return dispersionDirection(neighbors, Dir.LEFT);
+        } else if(shouldDisperse(neighbors, Dir.RIGHT)) {
+            return dispersionDirection(neighbors, Dir.RIGHT);
         }
         return true;
     }
 
-    private boolean shouldDisperse(Neighborhood neighbors, Neighborhood.Dir d) {
-        return dispersion * d.dx > 0 && neighbors.isEmpty(d) && Coords.randBool(dispersion * d.dx);
+    private boolean shouldDisperse(Neighborhood neighbors, Dir d) {
+        return dispersion * d.dx > 0 && neighbors.isEmpty(d) && Random.randBool(dispersion * d.dx);
     }
 
-    private boolean dispersionDirection(Neighborhood neighbors, Neighborhood.Dir d) {
+    private boolean dispersionDirection(Neighborhood neighbors, Dir d) {
         dispersion /= 1.5;
         return neighbors.move(d);
     }

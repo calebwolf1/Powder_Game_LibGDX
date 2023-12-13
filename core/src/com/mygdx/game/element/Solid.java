@@ -2,8 +2,10 @@ package com.mygdx.game.element;
 
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.ArrayMap;
-import com.mygdx.game.Coords;
 import com.mygdx.game.ElementManager;
+import com.mygdx.game.element.Neighborhood.Dir;
+import com.mygdx.game.utils.Random;
+
 
 public abstract class Solid extends Particle {
 
@@ -18,9 +20,9 @@ public abstract class Solid extends Particle {
     }
 
     public boolean applySwap(Neighborhood neighbors) {
-        if(neighbors.isLiquid(Neighborhood.Dir.DOWN)) {
-            if(Coords.randBool(getDensity() / 2)) {
-                neighbors.swap(Neighborhood.Dir.DOWN);
+        if(neighbors.isLiquid(Dir.DOWN)) {
+            if(Random.randBool(getDensity() / 2)) {
+                neighbors.swap(Dir.DOWN);
             }
         }
         return true;

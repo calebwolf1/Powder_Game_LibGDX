@@ -2,10 +2,10 @@ package com.mygdx.game.element;
 
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.ArrayMap;
-import com.mygdx.game.Coords;
 import com.mygdx.game.GameManager;
 import com.mygdx.game.Position;
-
+import com.mygdx.game.element.Neighborhood.Dir;
+import com.mygdx.game.utils.Random;
 
 public abstract class Particle extends Element {
 
@@ -67,14 +67,14 @@ public abstract class Particle extends Element {
     // true if stayed in bounds, false if not and was removed
     public boolean applyGravity(Neighborhood neighbors) {
         if(!ready) {
-            if(Coords.randBool(getDensity())) {
+            if(Random.randBool(getDensity())) {
                 ready = true;
             }
         }
         if(ready) {
-            if(neighbors.isEmpty(Neighborhood.Dir.DOWN)) {
+            if(neighbors.isEmpty(Dir.DOWN)) {
                 ready = false;
-                return neighbors.move(Neighborhood.Dir.DOWN);
+                return neighbors.move(Dir.DOWN);
             }
         }
         return true;
@@ -87,10 +87,9 @@ public abstract class Particle extends Element {
      * magnitude as the chance it has to move into the final position. If there is an obstruction on
      * the path, moves to one before the obstruction and ignores the remaining vector. Returns the
      * new position of the particle.
-     * @param oldPos
-     * @param velocityMap
-     * @param elementMap
-     * @return
+     * @param velocityMap the velocity map
+     * @param elementMap the element map
+     * @return whether the particle moved off the screen and was deleted or not.
      */
     public boolean move(ArrayMap<Vector2> velocityMap, ArrayMap<Element> elementMap) {
         Vector2 newPos = getNewPos(velocityMap);

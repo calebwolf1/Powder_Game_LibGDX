@@ -79,25 +79,25 @@ public class ButtonTable {
         return table;
     }
 
-    public void addTextButton(String text, Consumer<TextButton> leftClickFn) {
+    public void addTextButton(String text, Consumer<TextButton> onLeftClick) {
         TextButton button = new TextButton(text, skin);
-        addListener(button, Input.Buttons.LEFT, leftClickFn);
+        addListener(button, Input.Buttons.LEFT, onLeftClick);
         buttons.add(button);
     }
 
-    public void addTextButton(String text, Consumer<TextButton> leftClickFn,
-                              Consumer<TextButton> rightClickFn) {
+    public void addTextButton(String text, Consumer<TextButton> onLeftClick,
+                              Consumer<TextButton> onRightClick) {
         TextButton button = new TextButton(text, skin);
-        addListener(button, Input.Buttons.LEFT, leftClickFn);
-        addListener(button, Input.Buttons.RIGHT, rightClickFn);
+        addListener(button, Input.Buttons.LEFT, onLeftClick);
+        addListener(button, Input.Buttons.RIGHT, onRightClick);
         buttons.add(button);
     }
 
-    private void addListener(TextButton button, int clickType, Consumer<TextButton> clickFn) {
+    private void addListener(TextButton button, int clickType, Consumer<TextButton> onClick) {
         button.addListener(new ClickListener(clickType) {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                clickFn.accept(button);
+                onClick.accept(button);
             }
         });
     }

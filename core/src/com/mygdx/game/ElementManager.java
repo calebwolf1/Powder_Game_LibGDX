@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectSet;
 import com.mygdx.game.element.*;
+import com.mygdx.game.utils.Shape;
 import org.reflections.Reflections;
 
 import java.lang.reflect.InvocationTargetException;
@@ -16,9 +17,8 @@ import static com.mygdx.game.GameManager.boundsCheck;
 
 public class ElementManager {
     // constants
-//    public static final int X_RES = 300, Y_RES = 200;  // dimensions of game area
     private static final int MAX_PARTICLES = 20_000;
-    private static final int BORDER_WIDTH = 2;
+    private static final int BORDER_WIDTH = 4;
     public static final Vector2 G = new Vector2(0, 0.7f);
     private static final Array<Class<? extends Element>> P_TYPES;
 
@@ -116,10 +116,10 @@ public class ElementManager {
         while(i < BORDER_WIDTH) {
             int yLim = elementMap.height - 1 - i;
             int xLim = elementMap.width - 1 - i;
-            Coords.line(i, i, i, yLim, 0, lineFn);  // left
-            Coords.line(xLim, i, xLim, yLim, 0, lineFn);  // right
-            Coords.line(i, i, xLim, i, 0, lineFn);  // top
-            Coords.line(i, yLim, xLim, yLim, 0, lineFn);  // bottom
+            Shape.line(i, i, i, yLim, 0, lineFn);  // left
+            Shape.line(xLim, i, xLim, yLim, 0, lineFn);  // right
+            Shape.line(i, i, xLim, i, 0, lineFn);  // top
+            Shape.line(i, yLim, xLim, yLim, 0, lineFn);  // bottom
             i++;
         }
     }

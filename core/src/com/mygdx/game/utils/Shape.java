@@ -1,36 +1,10 @@
-package com.mygdx.game;
+package com.mygdx.game.utils;
 
-import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.BiIntConsumer;
 
-// Collection of static methods to translate between the three coordinate systems used by this
-// application: touch, screen, and simulation.
-public class Coords {
-    // move to another class, possibly make new folder for both
-    // TODO: 12/4/2023 make faster
-    public static boolean randBool(float p) {
-        return Math.random() < p;
-    }
-
-    public static boolean coinToss() {
-        return randBool(0.5f);
-    }
-
-    public static float randFloat() {
-        return (float) Math.random();
-    }
-
-    // get the x component of the given vector rounded to the nearest integer
-    public static int intX(Vector2 v) {
-        return Math.round(v.x);
-    }
-
-    // get the y component of the given vector rounded to the nearest integer
-    public static int intY(Vector2 v) {
-        return Math.round(v.y);
-    }
-
+public class Shape {
     public static void line(int x0, int y0, int x1, int y1,
-                                         int radius, BiIntConsumer lineFn) {
+                            int radius, BiIntConsumer lineFn) {
         if(Math.abs(y1 - y0) < Math.abs(x1 - x0)) {
             if(x0 < x1) {
                 getLineLow(x0, y0, x1, y1, radius, lineFn);
@@ -47,7 +21,7 @@ public class Coords {
     }
 
     private static void getLineLow(int x0, int y0, int x1, int y1, int radius,
-                                             BiIntConsumer lineFn) {
+                                   BiIntConsumer lineFn) {
         // dx > dy
         int dx = x1 - x0;
         int dy = y1 - y0;
@@ -93,7 +67,7 @@ public class Coords {
     }
 
     public static void circle(int x, int y, int radius, boolean filled,
-                               BiIntConsumer circleFn) {
+                              BiIntConsumer circleFn) {
         if(radius == 0) {
             circleFn.accept(x, y);
             return;

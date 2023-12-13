@@ -4,6 +4,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.element.Element;
 import com.mygdx.game.element.Powder;
+import com.mygdx.game.utils.Shape;
 
 import java.util.Locale;
 
@@ -42,16 +43,16 @@ public class PenManager implements InputProcessor {
     // perform pen action
     public void act() {
         if(penType == PenType.FREE && placing) {
-            Coords.line(mousePrevX, mousePrevY, mouseX, mouseY, penSize, penAction);
+            Shape.line(mousePrevX, mousePrevY, mouseX, mouseY, penSize, penAction);
         }
     }
 
     // draw pen outline and line
     public void draw(BiIntConsumer drawFn) {
         if(penType == PenType.LINE && placing) {
-            Coords.line(lineStartX, lineStartY, mouseX, mouseY, 0, drawFn);
+            Shape.line(lineStartX, lineStartY, mouseX, mouseY, 0, drawFn);
         }
-        Coords.circle(mouseX, mouseY, penSize, false, drawFn);
+        Shape.circle(mouseX, mouseY, penSize, false, drawFn);
     }
 
     public Class<? extends Element> getActiveElement() {
@@ -89,7 +90,7 @@ public class PenManager implements InputProcessor {
     /**
      * Called when a key was pressed
      *
-     * @param keycode one of the constants in {@link Input.Keys}
+     * @param keycode one of the constants in
      * @return whether the input was processed
      */
     @Override
@@ -100,7 +101,7 @@ public class PenManager implements InputProcessor {
     /**
      * Called when a key was released
      *
-     * @param keycode one of the constants in {@link Input.Keys}
+     * @param keycode one of the constants in
      * @return whether the input was processed
      */
     @Override
@@ -120,8 +121,7 @@ public class PenManager implements InputProcessor {
     }
 
     /**
-     * Called when the screen was touched or a mouse button was pressed. The button parameter
-     * will be {@link Buttons#LEFT} on iOS.
+     * Called when the screen was touched or a mouse button was pressed.
      *
      * @param screenX The x coordinate, origin is in the upper left corner
      * @param screenY The y coordinate, origin is in the upper left corner
@@ -140,11 +140,10 @@ public class PenManager implements InputProcessor {
     }
 
     /**
-     * Called when a finger was lifted or a mouse button was released. The button parameter will
-     * be {@link Buttons#LEFT} on iOS.
+     * Called when a finger was lifted or a mouse button was released.
      *
-     * @param screenX
-     * @param screenY
+     * @param screenX the screen X
+     * @param screenY the screen Y
      * @param pointer the pointer for the event.
      * @param button  the button
      * @return whether the input was processed
@@ -153,7 +152,7 @@ public class PenManager implements InputProcessor {
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         placing = false;
         if(penType == PenType.LINE) {
-            Coords.line(lineStartX, lineStartY, mouseX, mouseY, penSize, penAction);
+            Shape.line(lineStartX, lineStartY, mouseX, mouseY, penSize, penAction);
         }
         return true;
     }
@@ -161,8 +160,8 @@ public class PenManager implements InputProcessor {
     /**
      * Called when a finger or the mouse was dragged.
      *
-     * @param screenX
-     * @param screenY
+     * @param screenX the screen X
+     * @param screenY the screen Y
      * @param pointer the pointer for the event.
      * @return whether the input was processed
      */
@@ -174,8 +173,8 @@ public class PenManager implements InputProcessor {
     /**
      * Called when the mouse was moved without any buttons being pressed. Will not be called on iOS.
      *
-     * @param screenX
-     * @param screenY
+     * @param screenX the screen X
+     * @param screenY the screen Y
      * @return whether the input was processed
      */
     @Override
