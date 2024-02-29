@@ -1,7 +1,5 @@
 package com.mygdx.game.element;
 
-import com.badlogic.gdx.math.Vector2;
-import com.mygdx.game.ArrayMap;
 import com.mygdx.game.element.Neighborhood.Dir;
 import com.mygdx.game.utils.Random;
 
@@ -16,27 +14,13 @@ public abstract class Liquid extends Particle {
 
     public abstract float getDispersionRate();
 
-    /**
-     * Calculates the farthest position this Particle can travel to if not obstructed. Based on
-     * its current position, the velocity of the frame it is in, and what type of matter it is.
-     * Defined in Solid, Liquid, and Gas, but can be overridden if a Particle has a different
-     * movement pattern.
-     *
-     * @param velMap the velocity map
-     * @return the distance this Particle should travel without obstructions.
-     */
-    @Override
-    public Vector2 getNewPos(ArrayMap<Vector2> velMap) {
-        return null;
-    }
-
     @Override
     public boolean move(Neighborhood neighbors) {
         return applyGravity(neighbors)
-//                && applyVelocity(elementMap)
                 && applyDispersion(neighbors);
     }
 
+    // behavior: if neighbors on both sides, do nothing. if neighbor on one side, add dispersion
     public boolean applyDispersion(Neighborhood neighbors) {
         // calculate dispersion
         boolean canGoLeft = neighbors.isEmpty(Dir.LEFT);

@@ -1,7 +1,6 @@
 package com.mygdx.game.element;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Vector2;
 
 public class Stone extends Solid {
     private static final Color color = new Color(0x80808000);

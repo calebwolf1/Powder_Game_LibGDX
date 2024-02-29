@@ -1,7 +1,6 @@
 package com.mygdx.game.element;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.Vector2;
 
 public class Powder extends Solid {
     private static final Color color = new Color(0xF2BD6B00);

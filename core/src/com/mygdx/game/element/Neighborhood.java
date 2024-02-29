@@ -18,6 +18,7 @@ public class Neighborhood {
 
         public final int dx;
         public final int dy;
+
         Dir(int dx, int dy) {
             this.dx = dx;
             this.dy = dy;
