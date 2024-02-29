@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectSet;
 import com.mygdx.game.element.*;
+import com.mygdx.game.utils.BiIntConsumer;
 import com.mygdx.game.utils.Shape;
 import org.reflections.Reflections;
 
@@ -28,7 +29,7 @@ public class ElementManager {
 
     static {
         // initialize P_TYPES with every concrete descendant of Element
-        Reflections ref = new Reflections("com.mygdx.game");
+        Reflections ref = new Reflections("com.mygdx.game.element");
         Set<Class<? extends Element>> set = ref.getSubTypesOf(Element.class);
         set.removeIf(c -> Modifier.isAbstract(c.getModifiers()));
         P_TYPES = new Array<>();
@@ -43,7 +44,7 @@ public class ElementManager {
         makeBorder();
     }
 
-    public void update(ArrayMap<Vector2> velocityMap) {
+    public void update(FluidManager fluid) {
         // move particles
         Iterator<Element> it = elements.iterator();
         while(it.hasNext()) {

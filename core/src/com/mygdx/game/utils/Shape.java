@@ -1,7 +1,5 @@
 package com.mygdx.game.utils;
 
-import com.mygdx.game.BiIntConsumer;
-
 public class Shape {
     public static void line(int x0, int y0, int x1, int y1,
                             int radius, BiIntConsumer lineFn) {

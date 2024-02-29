@@ -5,21 +5,20 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.mygdx.game.utils.BiIntConsumer;
 
 public class GameManager extends ApplicationAdapter {
-	// possible optimization: store Element positions as longs composed of two ints
 	// constants
 	private static final float T_PROP = 0.75f; // proportion of game screen taken up by top layer
 	public static final int X_RES = 400, Y_RES = 300;  // dimensions of game area
 //	private static final float CONTROL_WIDTH = 400;
 	private static final float CONTROL_HEIGHT = Y_RES / T_PROP - Y_RES;
-	private static final int PARTS_PER_FLUID = 4;  // size of a fluid cell, in Particles
 	private static final float MAX_PRESSURE = 2f;
 
 	private boolean paused;
 
 	// components
-	private FluidManager2 fluidManager;
+	private FluidManager fluidManager;
 	private ElementManager elementManager;
 	private RectDrawer shape;
 	private PenManager penManager;
@@ -30,8 +29,7 @@ public class GameManager extends ApplicationAdapter {
 	@Override
 	public void create() {
 		penManager = new PenManager(this, this::placeElement);
-//		fluidManager = new FluidManager2(X_RES / PARTS_PER_FLUID, Y_RES / PARTS_PER_FLUID);
-		fluidManager = new FluidManager2(X_RES, Y_RES);
+//		fluidManager = new FluidManager(X_RES, Y_RES);
 		shape = new RectDrawer();
 		elementManager = new ElementManager(X_RES, Y_RES);
 		buttonTable = new ButtonTable(X_RES, CONTROL_HEIGHT);
@@ -49,17 +47,11 @@ public class GameManager extends ApplicationAdapter {
 		Gdx.gl.glClearColor(0.25f,0.25f,0.25f, 1);
 	}
 
-	// computes updates to game state not directly caused by events every frame
-	private void update() {
-		// place elements
-		penManager.act();
+	private void updateSim() {
+//		fluidManager.step(1);
 
-		if(!paused) {
-			fluidManager.step(1);
-
-			// move particles
-			elementManager.update(fluidManager.getVelocityMap());
-		}
+		// move particles
+		elementManager.update(fluidManager);
 	}
 
 	// updates graphics every frame
@@ -70,19 +62,11 @@ public class GameManager extends ApplicationAdapter {
 		gameViewport.apply();
 		BiIntConsumer drawRedRect = (x, y) -> shape.drawRect(x, y, 1, 1, Color.RED);
 		shape.drawRect(0, 0, X_RES, Y_RES, Color.BLACK);
-		// draw pressure and velocity of each cell of fluid manager first
-//		fluidManager.applyPressureFn(((xPos, yPos, p) ->
-//				shape.drawRect(xPos * PARTS_PER_FLUID, yPos * PARTS_PER_FLUID, PARTS_PER_FLUID,
-//						PARTS_PER_FLUID, getPressureColor(p))));
-//		fluidManager.applyVelocityFn(((xPos, yPos, vx, vy) ->
-//				Coords.line(xPos * PARTS_PER_FLUID, yPos * PARTS_PER_FLUID,
-//						xPos * PARTS_PER_FLUID + Math.round(vx) * PARTS_PER_FLUID,
-//						yPos * PARTS_PER_FLUID + Math.round(vy) * PARTS_PER_FLUID, 0,
-//				drawRedRect)));
 
-		// draw elements
+		// draw elements, pen, and fluid
+		// TODO: 12/27/2023 standardize drawing across manager classes
+//		fluidManager.draw(shape);
 		elementManager.forEachElement(e -> e.draw(shape));
-
 		penManager.draw(drawRedRect);
 
 		// call after drawing every rect that needs to be drawn this frame
@@ -102,7 +86,10 @@ public class GameManager extends ApplicationAdapter {
 
 	@Override
 	public void render() {
-		update();
+		penManager.act();
+		if(!paused) {
+			updateSim();
+		}
 		draw();
 	}
 
@@ -169,8 +156,7 @@ public class GameManager extends ApplicationAdapter {
 		// step
 		buttonTable.addTextButton("Step", b -> {
 			if(paused) {
-
-				elementManager.update(fluidManager.getVelocityMap());
+				updateSim();
 			}
 		});
 	}

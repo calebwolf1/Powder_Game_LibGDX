@@ -4,6 +4,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.element.Element;
 import com.mygdx.game.element.Powder;
+import com.mygdx.game.utils.BiIntConsumer;
 import com.mygdx.game.utils.Shape;
 
 import java.util.Locale;
