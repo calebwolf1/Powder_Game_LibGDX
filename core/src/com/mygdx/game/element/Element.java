@@ -1,7 +1,7 @@
 package com.mygdx.game.element;
 
 import com.badlogic.gdx.graphics.Color;
-import com.mygdx.game.RectDrawer;
+import com.mygdx.game.utils.RectDrawer;
 
 public abstract class Element {
     protected int x, y;

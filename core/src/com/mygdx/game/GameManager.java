@@ -5,7 +5,9 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.mygdx.game.utils.BiIntConsumer;
+import com.mygdx.game.utils.LayeredFitViewport;
+import com.mygdx.game.utils.Projector;
+import com.mygdx.game.utils.RectDrawer;
 
 public class GameManager extends ApplicationAdapter {
 	// constants
@@ -20,7 +22,7 @@ public class GameManager extends ApplicationAdapter {
 	// components
 	private FluidManager fluidManager;
 	private ElementManager elementManager;
-	private RectDrawer shape;
+	private RectDrawer rectDrawer;
 	private PenManager penManager;
 	private ButtonTable buttonTable;
 	private Viewport gameViewport;
@@ -28,12 +30,12 @@ public class GameManager extends ApplicationAdapter {
 
 	@Override
 	public void create() {
-		penManager = new PenManager(this, this::placeElement);
-//		fluidManager = new FluidManager(X_RES, Y_RES);
-		shape = new RectDrawer();
+		fluidManager = new FluidManager(X_RES, Y_RES);
+		rectDrawer = new RectDrawer();
 		elementManager = new ElementManager(X_RES, Y_RES);
 		buttonTable = new ButtonTable(X_RES, CONTROL_HEIGHT);
 		gameViewport = new LayeredFitViewport(X_RES, Y_RES, T_PROP, true, true);
+		penManager = new PenManager(new Projector(gameViewport), this::placeElement);
 		controlStage = new Stage(new LayeredFitViewport(X_RES, CONTROL_HEIGHT,
 				1 - T_PROP, false));
 
@@ -60,17 +62,23 @@ public class GameManager extends ApplicationAdapter {
 
 		// draw game area
 		gameViewport.apply();
-		BiIntConsumer drawRedRect = (x, y) -> shape.drawRect(x, y, 1, 1, Color.RED);
-		shape.drawRect(0, 0, X_RES, Y_RES, Color.BLACK);
+		rectDrawer.drawRect(0, 0, X_RES, Y_RES, Color.BLACK);
 
 		// draw elements, pen, and fluid
-		// TODO: 12/27/2023 standardize drawing across manager classes
-//		fluidManager.draw(shape);
-		elementManager.forEachElement(e -> e.draw(shape));
-		penManager.draw(drawRedRect);
+		FluidDrawer fluidDrawer = new FluidDrawer(rectDrawer);
+		fluidManager.export(fluidDrawer);
+		fluidDrawer.draw();
+
+		ElementDrawer elementDrawer = new ElementDrawer(rectDrawer);
+		elementManager.export(elementDrawer);
+		elementDrawer.draw();
+
+		PenDrawer penDrawer = new PenDrawer(rectDrawer);
+		penManager.export(penDrawer);
+		penDrawer.draw();
 
 		// call after drawing every rect that needs to be drawn this frame
-		shape.flush();
+		rectDrawer.flush();
 
 		// draw control area
 		controlStage.getViewport().apply();
@@ -96,7 +104,7 @@ public class GameManager extends ApplicationAdapter {
 	@Override
 	public void resize(int width, int height) {
 		gameViewport.update(width, height, true);
-		shape.setProjectionMatrix(gameViewport.getCamera().combined);
+		rectDrawer.setProjectionMatrix(gameViewport.getCamera().combined);
 		controlStage.getViewport().update(width, height);
 	}
 
@@ -159,10 +167,6 @@ public class GameManager extends ApplicationAdapter {
 				updateSim();
 			}
 		});
-	}
-
-	public Viewport getGameViewport() {
-		return gameViewport;
 	}
 
 	public static boolean boundsCheck(int x, int y) {

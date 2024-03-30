@@ -15,16 +15,12 @@ public abstract class Particle extends Element {
 
     // true if stayed in bounds, false if not and was removed
     public boolean applyGravity(Neighborhood neighbors) {
-        if (!ready) {
-            if (Random.randBool(getDensity())) {
-                ready = true;
-            }
+        if (!ready && Random.randBool(getDensity())) {
+            ready = true;
         }
-        if (ready) {
-            if (neighbors.isEmpty(Dir.DOWN)) {
-                ready = false;
-                return neighbors.move(Dir.DOWN);
-            }
+        if (ready && neighbors.isEmpty(Dir.DOWN)) {
+            ready = false;
+            return neighbors.move(Dir.DOWN);
         }
         return true;
     }

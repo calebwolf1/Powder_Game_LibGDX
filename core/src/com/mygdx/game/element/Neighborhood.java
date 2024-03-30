@@ -1,6 +1,6 @@
 package com.mygdx.game.element;
 
-import com.mygdx.game.ArrayMap;
+import com.mygdx.game.utils.ArrayMap;
 
 import static com.mygdx.game.GameManager.boundsCheck;
 

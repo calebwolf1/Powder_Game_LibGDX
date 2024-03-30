@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectSet;
 import com.mygdx.game.element.*;
+import com.mygdx.game.utils.ArrayMap;
 import com.mygdx.game.utils.BiIntConsumer;
 import com.mygdx.game.utils.Shape;
 import org.reflections.Reflections;
@@ -26,6 +27,14 @@ public class ElementManager {
     // data structures
     private ArrayMap<Element> elementMap;  // map of on-screen Elements in each game position
     private ObjectSet<Element> elements; // set of Elements in the game
+
+    public interface Exporter {
+        void addState(ObjectSet<Element> elements);
+    }
+
+    public void export(Exporter builder) {
+        builder.addState(elements);
+    }
 
     static {
         // initialize P_TYPES with every concrete descendant of Element

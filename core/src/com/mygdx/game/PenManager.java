@@ -5,13 +5,13 @@ import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.element.Element;
 import com.mygdx.game.element.Powder;
 import com.mygdx.game.utils.BiIntConsumer;
+import com.mygdx.game.utils.Projector;
 import com.mygdx.game.utils.Shape;
 
 import java.util.Locale;
 
 public class PenManager implements InputProcessor {
-    private GameManager game;
-
+    private Projector projector;
     private boolean placing;
     private int mouseX, mouseY;  // game coordinates
     private int mousePrevX, mousePrevY;  // mouse coords from previous interrupt
@@ -31,13 +31,17 @@ public class PenManager implements InputProcessor {
         }
     }
 
-    // not ideal to store GM
-    PenManager(GameManager game) {
-        this.game = game;
+    public interface Exporter {
+        void addState(PenType penType, boolean placing, int lineStartX, int lineStartY,
+                      int mouseX, int mouseY, int penSize);
     }
 
-    PenManager(GameManager game, BiIntConsumer penAction) {
-        this.game = game;
+    public void export(Exporter builder) {
+        builder.addState(penType, placing, lineStartX, lineStartY, mouseX, mouseY, penSize);
+    }
+
+    PenManager(Projector projector, BiIntConsumer penAction) {
+        this.projector = projector;
         this.penAction = penAction;
     }
 
@@ -46,14 +50,6 @@ public class PenManager implements InputProcessor {
         if(penType == PenType.FREE && placing) {
             Shape.line(mousePrevX, mousePrevY, mouseX, mouseY, penSize, penAction);
         }
-    }
-
-    // draw pen outline and line
-    public void draw(BiIntConsumer drawFn) {
-        if(penType == PenType.LINE && placing) {
-            Shape.line(lineStartX, lineStartY, mouseX, mouseY, 0, drawFn);
-        }
-        Shape.circle(mouseX, mouseY, penSize, false, drawFn);
     }
 
     public Class<? extends Element> getActiveElement() {
@@ -134,7 +130,8 @@ public class PenManager implements InputProcessor {
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         placing = true;
         Vector2 vec = new Vector2((float) screenX, (float) screenY);
-        game.getGameViewport().unproject(vec);
+//        game.getGameViewport().unproject(vec);
+        projector.unproject(vec);
         lineStartX = Math.round(vec.x);
         lineStartY = Math.round(vec.y);
         return setMouse(screenX, screenY);
@@ -202,7 +199,7 @@ public class PenManager implements InputProcessor {
         mousePrevX = mouseX;
         mousePrevY = mouseY;
         Vector2 vec = new Vector2((float) screenX, (float) screenY);
-        game.getGameViewport().unproject(vec);
+        projector.unproject(vec);
         mouseX = Math.round(vec.x);
         mouseY = Math.round(vec.y);
         return true;

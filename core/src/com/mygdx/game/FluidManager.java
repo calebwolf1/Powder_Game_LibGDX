@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.utils.BiIntConsumer;
+import com.mygdx.game.utils.RectDrawer;
 import com.mygdx.game.utils.Shape;
 
 public class FluidManager {
@@ -18,6 +19,14 @@ public class FluidManager {
     private float[][] p;
     private float[][] pTmp;
     private float[][] div;
+
+    public interface Exporter {
+        void addState(Vector2[][] u, float[][] p);
+    }
+
+    public void export(Exporter builder) {
+        builder.addState(u, p);
+    }
 
     public FluidManager(int xRes, int yRes) {
         u = new Vector2[xRes / ELEMS_PER_FLUID + 2][yRes / ELEMS_PER_FLUID + 2];
