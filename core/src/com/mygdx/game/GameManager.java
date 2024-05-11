@@ -11,6 +11,7 @@ import com.mygdx.game.component.drawer.PenDrawer;
 import com.mygdx.game.component.manager.ElementManager;
 import com.mygdx.game.component.manager.FluidManager;
 import com.mygdx.game.component.manager.PenManager;
+import com.mygdx.game.element.ElementFactory;
 import com.mygdx.game.utils.LayeredFitViewport;
 import com.mygdx.game.utils.Projector;
 import com.mygdx.game.utils.RectDrawer;
@@ -118,13 +119,12 @@ public class GameManager extends ApplicationAdapter {
 
 	private void addButtons() {
 		// Element buttons
-		elementManager.forEachPType(t -> {
-			String elemName = t.getSimpleName();
-			buttonTable.addTextButton(elemName, b -> {
-				penManager.setActiveElement(t);
+		for(String elem : ElementFactory.ELEMENT_NAMES) {
+			buttonTable.addTextButton(elem, b -> {
+				penManager.setActiveElement(elem);
 				penManager.setPenAction(this::placeElement);
 			});
-		});
+		}
 
 		// pen size
 		buttonTable.addTextButton("psize: " + penManager.getPenSize(), b -> {

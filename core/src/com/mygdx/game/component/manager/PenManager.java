@@ -3,8 +3,6 @@ package com.mygdx.game.component.manager;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.component.view.Pen;
-import com.mygdx.game.element.Element;
-import com.mygdx.game.element.Powder;
 import com.mygdx.game.utils.BiIntConsumer;
 import com.mygdx.game.utils.Position;
 import com.mygdx.game.utils.Projector;
@@ -18,7 +16,7 @@ public class PenManager implements InputProcessor, Pen {
     private int mouseX, mouseY;  // game coordinates
     private int mousePrevX, mousePrevY;  // mouse coords from previous interrupt
     private int lineStartX, lineStartY;
-    private Class<? extends Element> activeElement = Powder.class;
+    private String activeElement = "powder";
     private int penSize = 2;
     private LineType lineType = LineType.FREE;
     private BiIntConsumer penAction;
@@ -45,11 +43,11 @@ public class PenManager implements InputProcessor, Pen {
         }
     }
 
-    public Class<? extends Element> getActiveElement() {
+    public String getActiveElement() {
         return activeElement;
     }
 
-    public void setActiveElement(Class<? extends Element> c) {
+    public void setActiveElement(String c) {
         activeElement = c;
     }
 

@@ -1,20 +1,15 @@
 package com.mygdx.game.component.manager;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectSet;
 import com.mygdx.game.element.*;
 import com.mygdx.game.utils.ArrayMap;
 import com.mygdx.game.utils.BiIntConsumer;
 import com.mygdx.game.utils.Shape;
 import com.mygdx.game.component.view.Elements;
-import org.reflections.Reflections;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Modifier;
 import java.util.Iterator;
-import java.util.Set;
-import java.util.function.Consumer;
 
 import static com.mygdx.game.GameManager.boundsCheck;
 
@@ -23,22 +18,12 @@ public class ElementManager implements Elements {
     private static final int MAX_PARTICLES = 20_000;
     private static final int BORDER_WIDTH = 4;
     public static final Vector2 G = new Vector2(0, 0.7f);
-    private static final Array<Class<? extends Element>> P_TYPES;
 
     // data structures
     private ArrayMap<Element> elementMap;  // map of on-screen Elements in each game position
     private ObjectSet<Element> elements; // set of Elements in the game
 
-    static {
-        // initialize P_TYPES with every concrete descendant of Element
-        Reflections ref = new Reflections("com.mygdx.game.element");
-        Set<Class<? extends Element>> set = ref.getSubTypesOf(Element.class);
-        set.removeIf(c -> Modifier.isAbstract(c.getModifiers()));
-        P_TYPES = new Array<>();
-        for(Class<? extends Element> c : set) {
-            P_TYPES.add(c);
-        }
-    }
+    private ElementFactory elementFactory;
 
     @Override
     public Iterator<Element> iterator() {
@@ -54,6 +39,7 @@ public class ElementManager implements Elements {
     public ElementManager(int xRes, int yRes) {
         elementMap = new ArrayMap<>(xRes, yRes);
         elements = new ObjectSet<>(MAX_PARTICLES);
+        elementFactory = new ElementFactory();
         makeBorder();
     }
 
@@ -71,17 +57,10 @@ public class ElementManager implements Elements {
         }
     }
 
-    public void placeElement(int x, int y, Class<? extends Element> c) {
+    public void placeElement(int x, int y, String name) {
         if(elements.size < MAX_PARTICLES) {
-            if (boundsCheck(x, y) && elementMap.isEmpty(x, y)) {
-                Element e = null;
-                try {
-                    e = c.getConstructor(int.class, int.class).newInstance(x, y);
-                } catch (InstantiationException | NoSuchMethodException |
-                        IllegalAccessException | InvocationTargetException ex) {
-                    ex.printStackTrace();
-                    System.exit(-1);
-                }
+            if(boundsCheck(x, y) && elementMap.isEmpty(x, y)) {
+                Element e = elementFactory.createElement(name, x, y);
                 elementMap.set(x, y, e);
                 elements.add(e);
             }
@@ -120,7 +99,7 @@ public class ElementManager implements Elements {
     }
 
     private void makeBorder() {
-        BiIntConsumer lineFn = (x, y) -> placeElement(x, y, Block.class);
+        BiIntConsumer lineFn = (x, y) -> placeElement(x, y, "block");
 
         int i = 0;
         while(i < BORDER_WIDTH) {
@@ -132,9 +111,5 @@ public class ElementManager implements Elements {
             Shape.line(i, yLim, xLim, yLim, 0, lineFn);  // bottom
             i++;
         }
-    }
-
-    public void forEachPType(Consumer<Class<? extends Element>> pTypeFn) {
-        P_TYPES.forEach(pTypeFn);
     }
 }
