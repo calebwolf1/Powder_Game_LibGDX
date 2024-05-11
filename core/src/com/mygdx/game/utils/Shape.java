@@ -1,6 +1,12 @@
 package com.mygdx.game.utils;
 
+import javafx.geometry.Pos;
+
 public class Shape {
+    public static void line(Position p0, Position p1, int radius, BiIntConsumer lineFn) {
+        line(p0.x, p0.y, p1.x, p1.y, radius, lineFn);
+    }
+
     public static void line(int x0, int y0, int x1, int y1,
                             int radius, BiIntConsumer lineFn) {
         if(Math.abs(y1 - y0) < Math.abs(x1 - x0)) {
@@ -62,6 +68,10 @@ public class Shape {
                 D += 2 * dx;
             }
         }
+    }
+
+    public static void circle(Position p, int radius, boolean filled, BiIntConsumer circleFn) {
+        circle(p.x, p.y, radius, filled, circleFn);
     }
 
     public static void circle(int x, int y, int radius, boolean filled,

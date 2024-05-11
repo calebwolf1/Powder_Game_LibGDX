@@ -1,16 +1,18 @@
-package com.mygdx.game;
+package com.mygdx.game.component.manager;
 
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.component.view.Pen;
 import com.mygdx.game.element.Element;
 import com.mygdx.game.element.Powder;
 import com.mygdx.game.utils.BiIntConsumer;
+import com.mygdx.game.utils.Position;
 import com.mygdx.game.utils.Projector;
 import com.mygdx.game.utils.Shape;
 
 import java.util.Locale;
 
-public class PenManager implements InputProcessor {
+public class PenManager implements InputProcessor, Pen {
     private Projector projector;
     private boolean placing;
     private int mouseX, mouseY;  // game coordinates
@@ -18,36 +20,27 @@ public class PenManager implements InputProcessor {
     private int lineStartX, lineStartY;
     private Class<? extends Element> activeElement = Powder.class;
     private int penSize = 2;
-    private PenType penType = PenType.FREE;
+    private LineType lineType = LineType.FREE;
     private BiIntConsumer penAction;
 
-    public enum PenType {
+    public enum LineType {
         FREE, LINE;
 
-        private static final PenType[] vals = values();
+        private static final LineType[] vals = values();
 
-        public PenType next() {
+        public LineType next() {
             return vals[(this.ordinal() + 1) % vals.length];
         }
     }
 
-    public interface Exporter {
-        void addState(PenType penType, boolean placing, int lineStartX, int lineStartY,
-                      int mouseX, int mouseY, int penSize);
-    }
-
-    public void export(Exporter builder) {
-        builder.addState(penType, placing, lineStartX, lineStartY, mouseX, mouseY, penSize);
-    }
-
-    PenManager(Projector projector, BiIntConsumer penAction) {
+    public PenManager(Projector projector, BiIntConsumer penAction) {
         this.projector = projector;
         this.penAction = penAction;
     }
 
     // perform pen action
     public void act() {
-        if(penType == PenType.FREE && placing) {
+        if(lineType == LineType.FREE && placing) {
             Shape.line(mousePrevX, mousePrevY, mouseX, mouseY, penSize, penAction);
         }
     }
@@ -73,14 +66,31 @@ public class PenManager implements InputProcessor {
     }
 
     public void penTypeNext() {
-        penType = penType.next();
+        lineType = lineType.next();
     }
 
     public String getPenType() {
-        return penType.toString().toLowerCase(Locale.ROOT);
+        return lineType.toString().toLowerCase(Locale.ROOT);
     }
 
     public int getPenSize() {
+        return penSize;
+    }
+
+
+    public PenManager.LineType lineType() {
+        return lineType;
+    }
+    public boolean placing() {
+        return placing;
+    }
+    public Position lineStart() {
+        return new Position(lineStartX, lineStartY);
+    }
+    public Position mouse() {
+        return new Position(mouseX, mouseY);
+    }
+    public int penSize() {
         return penSize;
     }
 
@@ -149,7 +159,7 @@ public class PenManager implements InputProcessor {
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
         placing = false;
-        if(penType == PenType.LINE) {
+        if(lineType == LineType.LINE) {
             Shape.line(lineStartX, lineStartY, mouseX, mouseY, penSize, penAction);
         }
         return true;

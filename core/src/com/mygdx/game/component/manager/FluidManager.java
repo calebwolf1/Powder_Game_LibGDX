@@ -1,4 +1,4 @@
-package com.mygdx.game;
+package com.mygdx.game.component.manager;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
@@ -6,26 +6,30 @@ import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.utils.BiIntConsumer;
 import com.mygdx.game.utils.RectDrawer;
 import com.mygdx.game.utils.Shape;
+import com.mygdx.game.component.view.Fluid;
 
-public class FluidManager {
+public class FluidManager implements Fluid {
     private final int ELEMS_PER_FLUID = 3; // number of Element cells that fit across a single fluid cell
     private final int KD = 20;
     private final int KP = 40;
     private final int dx = 1;
     private final float visc = 0.3f;
     private final float halfrdx = 0.5f / dx;
+    // TODO: 5/1/2024 consider changing 2D arrays to ArrayMap
     private Vector2[][] u;
     private Vector2[][] uTmp;
     private float[][] p;
     private float[][] pTmp;
     private float[][] div;
 
-    public interface Exporter {
-        void addState(Vector2[][] u, float[][] p);
+    @Override
+    public float pressure(int x, int y) {
+        return p[y + 1][x + 1];
     }
 
-    public void export(Exporter builder) {
-        builder.addState(u, p);
+    @Override
+    public Vector2 velocity(int x, int y) {
+        return u[y + 1][x + 1];
     }
 
     public FluidManager(int xRes, int yRes) {

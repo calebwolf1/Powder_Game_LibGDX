@@ -1,4 +1,4 @@
-package com.mygdx.game;
+package com.mygdx.game.component.manager;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -7,6 +7,7 @@ import com.mygdx.game.element.*;
 import com.mygdx.game.utils.ArrayMap;
 import com.mygdx.game.utils.BiIntConsumer;
 import com.mygdx.game.utils.Shape;
+import com.mygdx.game.component.view.Elements;
 import org.reflections.Reflections;
 
 import java.lang.reflect.InvocationTargetException;
@@ -17,7 +18,7 @@ import java.util.function.Consumer;
 
 import static com.mygdx.game.GameManager.boundsCheck;
 
-public class ElementManager {
+public class ElementManager implements Elements {
     // constants
     private static final int MAX_PARTICLES = 20_000;
     private static final int BORDER_WIDTH = 4;
@@ -27,14 +28,6 @@ public class ElementManager {
     // data structures
     private ArrayMap<Element> elementMap;  // map of on-screen Elements in each game position
     private ObjectSet<Element> elements; // set of Elements in the game
-
-    public interface Exporter {
-        void addState(ObjectSet<Element> elements);
-    }
-
-    public void export(Exporter builder) {
-        builder.addState(elements);
-    }
 
     static {
         // initialize P_TYPES with every concrete descendant of Element
@@ -46,6 +39,17 @@ public class ElementManager {
             P_TYPES.add(c);
         }
     }
+
+    @Override
+    public Iterator<Element> iterator() {
+        return elements.iterator();
+    }
+
+    @Override
+    public Element elementAt(int x, int y) {
+        return elementMap.get(x, y);
+    }
+
 
     public ElementManager(int xRes, int yRes) {
         elementMap = new ArrayMap<>(xRes, yRes);
@@ -103,10 +107,6 @@ public class ElementManager {
                 elements.remove(e);
             }
         }
-    }
-
-    public void forEachElement(Consumer<Element> elemFn) {
-        elements.forEach(elemFn);
     }
 
     public void reset() {

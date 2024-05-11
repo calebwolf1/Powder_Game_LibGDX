@@ -5,6 +5,12 @@ import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.mygdx.game.component.drawer.ElementDrawer;
+import com.mygdx.game.component.drawer.FluidDrawer;
+import com.mygdx.game.component.drawer.PenDrawer;
+import com.mygdx.game.component.manager.ElementManager;
+import com.mygdx.game.component.manager.FluidManager;
+import com.mygdx.game.component.manager.PenManager;
 import com.mygdx.game.utils.LayeredFitViewport;
 import com.mygdx.game.utils.Projector;
 import com.mygdx.game.utils.RectDrawer;
@@ -66,16 +72,13 @@ public class GameManager extends ApplicationAdapter {
 
 		// draw elements, pen, and fluid
 		FluidDrawer fluidDrawer = new FluidDrawer(rectDrawer);
-		fluidManager.export(fluidDrawer);
-		fluidDrawer.draw();
+		fluidDrawer.draw(fluidManager);
 
 		ElementDrawer elementDrawer = new ElementDrawer(rectDrawer);
-		elementManager.export(elementDrawer);
-		elementDrawer.draw();
+		elementDrawer.draw(elementManager);
 
 		PenDrawer penDrawer = new PenDrawer(rectDrawer);
-		penManager.export(penDrawer);
-		penDrawer.draw();
+		penDrawer.draw(penManager);
 
 		// call after drawing every rect that needs to be drawn this frame
 		rectDrawer.flush();
@@ -146,7 +149,6 @@ public class GameManager extends ApplicationAdapter {
 
 		// reset
 		buttonTable.addTextButton("Reset", b -> {
-			// relies on each element storing its position, will probably have to change
 			elementManager.reset();
 		});
 
