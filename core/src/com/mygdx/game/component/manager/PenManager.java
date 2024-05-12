@@ -2,7 +2,9 @@ package com.mygdx.game.component.manager;
 
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector2;
+import com.mygdx.game.ButtonTable;
 import com.mygdx.game.component.view.Pen;
+import com.mygdx.game.element.ElementFactory;
 import com.mygdx.game.utils.BiIntConsumer;
 import com.mygdx.game.utils.Position;
 import com.mygdx.game.utils.Projector;
@@ -29,6 +31,11 @@ public class PenManager implements InputProcessor, Pen {
         public LineType next() {
             return vals[(this.ordinal() + 1) % vals.length];
         }
+
+        @Override
+        public String toString() {
+            return super.toString().toLowerCase(Locale.ROOT);
+        }
     }
 
     public PenManager(Projector projector, BiIntConsumer penAction) {
@@ -43,38 +50,10 @@ public class PenManager implements InputProcessor, Pen {
         }
     }
 
+    // TODO: 5/12/2024 find a way to get rid of this
     public String getActiveElement() {
         return activeElement;
     }
-
-    public void setActiveElement(String c) {
-        activeElement = c;
-    }
-
-    public void setPenAction(BiIntConsumer penAction) {
-        this.penAction = penAction;
-    }
-
-    public void penSizeUp() {
-        penSize = penSize == 9 ? 0 : penSize + 1;
-    }
-
-    public void penSizeDown() {
-        penSize = penSize == 0 ? 9 : penSize - 1;
-    }
-
-    public void penTypeNext() {
-        lineType = lineType.next();
-    }
-
-    public String getPenType() {
-        return lineType.toString().toLowerCase(Locale.ROOT);
-    }
-
-    public int getPenSize() {
-        return penSize;
-    }
-
 
     public PenManager.LineType lineType() {
         return lineType;
@@ -90,6 +69,38 @@ public class PenManager implements InputProcessor, Pen {
     }
     public int penSize() {
         return penSize;
+    }
+
+    public void addPenButtons(ButtonTable buttonTable, BiIntConsumer placeFn, BiIntConsumer clearFn,
+                           BiIntConsumer eraseFn) {
+        // Element buttons
+        for(String elem : ElementFactory.ELEMENT_NAMES) {
+            buttonTable.addTextButton(elem, b -> {
+                activeElement = elem;
+                penAction = placeFn;
+            });
+        }
+
+        // pen size
+        buttonTable.addTextButton("psize: " + penSize, b -> {
+            penSize = penSize == 9 ? 0 : penSize + 1;
+            b.setText("psize: " + penSize);
+        }, b -> {
+            penSize = penSize == 0 ? 9 : penSize - 1;
+            b.setText("psize: " + penSize);
+        });
+
+        // pen type
+        buttonTable.addTextButton("pen: " + lineType, b -> {
+            lineType = lineType.next();
+            b.setText("pen: " + lineType);
+        });
+
+        // clear
+        buttonTable.addTextButton("Clear", b -> penAction = clearFn);
+
+        // erase
+        buttonTable.addTextButton("Erase", b -> penAction = eraseFn);
     }
 
     /**

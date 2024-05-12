@@ -22,7 +22,6 @@ public class GameManager extends ApplicationAdapter {
 	public static final int X_RES = 400, Y_RES = 300;  // dimensions of game area
 //	private static final float CONTROL_WIDTH = 400;
 	private static final float CONTROL_HEIGHT = Y_RES / T_PROP - Y_RES;
-	private static final float MAX_PRESSURE = 2f;
 
 	private boolean paused;
 
@@ -34,6 +33,9 @@ public class GameManager extends ApplicationAdapter {
 	private ButtonTable buttonTable;
 	private Viewport gameViewport;
 	private Stage controlStage;
+	private FluidDrawer fluidDrawer;
+	private ElementDrawer elementDrawer;
+	private PenDrawer penDrawer;
 
 	@Override
 	public void create() {
@@ -43,6 +45,9 @@ public class GameManager extends ApplicationAdapter {
 		buttonTable = new ButtonTable(X_RES, CONTROL_HEIGHT);
 		gameViewport = new LayeredFitViewport(X_RES, Y_RES, T_PROP, true, true);
 		penManager = new PenManager(new Projector(gameViewport), this::placeElement);
+		fluidDrawer = new FluidDrawer(rectDrawer);
+		elementDrawer = new ElementDrawer(rectDrawer);
+		penDrawer = new PenDrawer(rectDrawer);
 		controlStage = new Stage(new LayeredFitViewport(X_RES, CONTROL_HEIGHT,
 				1 - T_PROP, false));
 
@@ -72,13 +77,8 @@ public class GameManager extends ApplicationAdapter {
 		rectDrawer.drawRect(0, 0, X_RES, Y_RES, Color.BLACK);
 
 		// draw elements, pen, and fluid
-		FluidDrawer fluidDrawer = new FluidDrawer(rectDrawer);
 		fluidDrawer.draw(fluidManager);
-
-		ElementDrawer elementDrawer = new ElementDrawer(rectDrawer);
 		elementDrawer.draw(elementManager);
-
-		PenDrawer penDrawer = new PenDrawer(rectDrawer);
 		penDrawer.draw(penManager);
 
 		// call after drawing every rect that needs to be drawn this frame
@@ -87,13 +87,6 @@ public class GameManager extends ApplicationAdapter {
 		// draw control area
 		controlStage.getViewport().apply();
 		controlStage.draw();
-	}
-
-	private Color getPressureColor(float p) {
-		if(p >= 0) {
-			return new Color(0f, p / MAX_PRESSURE, 0f, 0f);
-		}
-		return null;
 	}
 
 	@Override
@@ -118,39 +111,11 @@ public class GameManager extends ApplicationAdapter {
 
 
 	private void addButtons() {
-		// Element buttons
-		for(String elem : ElementFactory.ELEMENT_NAMES) {
-			buttonTable.addTextButton(elem, b -> {
-				penManager.setActiveElement(elem);
-				penManager.setPenAction(this::placeElement);
-			});
-		}
-
-		// pen size
-		buttonTable.addTextButton("psize: " + penManager.getPenSize(), b -> {
-			penManager.penSizeUp();
-			b.setText("psize: " + penManager.getPenSize());
-		}, b -> {
-			penManager.penSizeDown();
-			b.setText("psize: " + penManager.getPenSize());
-		});
-
-		// pen type
-		buttonTable.addTextButton("pen: " + penManager.getPenType(), b -> {
-			penManager.penTypeNext();
-			b.setText("pen: " + penManager.getPenType());
-		});
-
-		// clear
-		buttonTable.addTextButton("Clear", b -> penManager.setPenAction(elementManager::clearElement));
-
-		// erase
-		buttonTable.addTextButton("Erase", b -> penManager.setPenAction(elementManager::eraseElement));
+		penManager.addPenButtons(buttonTable, this::placeElement, elementManager::clearElement,
+				elementManager::eraseElement);
 
 		// reset
-		buttonTable.addTextButton("Reset", b -> {
-			elementManager.reset();
-		});
+		buttonTable.addTextButton("Reset", b -> elementManager.reset());
 
 		// pause
 		buttonTable.addTextButton(paused ? "Unpause" : "Pause", b -> {
