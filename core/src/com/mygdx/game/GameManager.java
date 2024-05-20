@@ -11,7 +11,6 @@ import com.mygdx.game.component.drawer.PenDrawer;
 import com.mygdx.game.component.manager.ElementManager;
 import com.mygdx.game.component.manager.FluidManager;
 import com.mygdx.game.component.manager.PenManager;
-import com.mygdx.game.element.ElementFactory;
 import com.mygdx.game.utils.LayeredFitViewport;
 import com.mygdx.game.utils.Projector;
 import com.mygdx.game.utils.RectDrawer;
@@ -44,7 +43,7 @@ public class GameManager extends ApplicationAdapter {
 		elementManager = new ElementManager(X_RES, Y_RES);
 		buttonTable = new ButtonTable(X_RES, CONTROL_HEIGHT);
 		gameViewport = new LayeredFitViewport(X_RES, Y_RES, T_PROP, true, true);
-		penManager = new PenManager(new Projector(gameViewport), this::placeElement);
+		penManager = new PenManager(new Projector(gameViewport));
 		fluidDrawer = new FluidDrawer(rectDrawer);
 		elementDrawer = new ElementDrawer(rectDrawer);
 		penDrawer = new PenDrawer(rectDrawer);
@@ -105,13 +104,8 @@ public class GameManager extends ApplicationAdapter {
 		controlStage.getViewport().update(width, height);
 	}
 
-	private void placeElement(int x, int y) {
-		elementManager.placeElement(x, y, penManager.getActiveElement());
-	}
-
-
 	private void addButtons() {
-		penManager.addPenButtons(buttonTable, this::placeElement, elementManager::clearElement,
+		penManager.addPenButtons(buttonTable, elementManager::placeElement, elementManager::clearElement,
 				elementManager::eraseElement);
 
 		// reset

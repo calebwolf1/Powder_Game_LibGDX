@@ -5,10 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.mygdx.game.ButtonTable;
 import com.mygdx.game.component.view.Pen;
 import com.mygdx.game.element.ElementFactory;
-import com.mygdx.game.utils.BiIntConsumer;
-import com.mygdx.game.utils.Position;
-import com.mygdx.game.utils.Projector;
-import com.mygdx.game.utils.Shape;
+import com.mygdx.game.utils.*;
 
 import java.util.Locale;
 
@@ -18,10 +15,9 @@ public class PenManager implements InputProcessor, Pen {
     private int mouseX, mouseY;  // game coordinates
     private int mousePrevX, mousePrevY;  // mouse coords from previous interrupt
     private int lineStartX, lineStartY;
-    private String activeElement = "powder";
     private int penSize = 2;
     private LineType lineType = LineType.FREE;
-    private BiIntConsumer penAction;
+    private BiIntConsumer penAction;  // initialized by create()
 
     public enum LineType {
         FREE, LINE;
@@ -38,9 +34,8 @@ public class PenManager implements InputProcessor, Pen {
         }
     }
 
-    public PenManager(Projector projector, BiIntConsumer penAction) {
+    public PenManager(Projector projector) {
         this.projector = projector;
-        this.penAction = penAction;
     }
 
     // perform pen action
@@ -48,11 +43,6 @@ public class PenManager implements InputProcessor, Pen {
         if(lineType == LineType.FREE && placing) {
             Shape.line(mousePrevX, mousePrevY, mouseX, mouseY, penSize, penAction);
         }
-    }
-
-    // TODO: 5/12/2024 find a way to get rid of this
-    public String getActiveElement() {
-        return activeElement;
     }
 
     public PenManager.LineType lineType() {
@@ -71,14 +61,13 @@ public class PenManager implements InputProcessor, Pen {
         return penSize;
     }
 
-    public void addPenButtons(ButtonTable buttonTable, BiIntConsumer placeFn, BiIntConsumer clearFn,
-                           BiIntConsumer eraseFn) {
+    public void addPenButtons(ButtonTable buttonTable, ElemConsumer placeFn, BiIntConsumer clearFn,
+                              BiIntConsumer eraseFn) {
+        // ensure penAction is initialized
+        penAction = (x, y) -> placeFn.accept(x, y, "powder");
         // Element buttons
         for(String elem : ElementFactory.ELEMENT_NAMES) {
-            buttonTable.addTextButton(elem, b -> {
-                activeElement = elem;
-                penAction = placeFn;
-            });
+            buttonTable.addTextButton(elem, b -> penAction = (x, y) -> placeFn.accept(x, y, elem));
         }
 
         // pen size
