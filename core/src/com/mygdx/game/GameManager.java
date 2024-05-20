@@ -4,51 +4,54 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mygdx.game.component.drawer.ElementDrawer;
 import com.mygdx.game.component.drawer.FluidDrawer;
 import com.mygdx.game.component.drawer.PenDrawer;
 import com.mygdx.game.component.manager.ElementManager;
 import com.mygdx.game.component.manager.FluidManager;
 import com.mygdx.game.component.manager.PenManager;
-import com.mygdx.game.utils.LayeredFitViewport;
 import com.mygdx.game.utils.Projector;
 import com.mygdx.game.utils.RectDrawer;
+import com.mygdx.game.utils.ViewportManager;
 
 public class GameManager extends ApplicationAdapter {
 	// constants
-	private static final float T_PROP = 0.75f; // proportion of game screen taken up by top layer
 	public static final int X_RES = 400, Y_RES = 300;  // dimensions of game area
-//	private static final float CONTROL_WIDTH = 400;
-	private static final float CONTROL_HEIGHT = Y_RES / T_PROP - Y_RES;
-
-	private boolean paused;
 
 	// components
+	private ViewportManager viewportManager;
+
 	private FluidManager fluidManager;
 	private ElementManager elementManager;
-	private RectDrawer rectDrawer;
 	private PenManager penManager;
-	private ButtonTable buttonTable;
-	private Viewport gameViewport;
-	private Stage controlStage;
+
+	private RectDrawer rectDrawer;
+
 	private FluidDrawer fluidDrawer;
 	private ElementDrawer elementDrawer;
 	private PenDrawer penDrawer;
 
+	private ButtonTable buttonTable;
+	private Stage controlStage;
+
+	// game state
+	private boolean paused;
+
 	@Override
 	public void create() {
-		fluidManager = new FluidManager(X_RES, Y_RES);
 		rectDrawer = new RectDrawer();
+		viewportManager = new ViewportManager(X_RES, Y_RES);
+
+		fluidManager = new FluidManager(X_RES, Y_RES);
 		elementManager = new ElementManager(X_RES, Y_RES);
-		buttonTable = new ButtonTable(X_RES, CONTROL_HEIGHT);
-		gameViewport = new LayeredFitViewport(X_RES, Y_RES, T_PROP, true, true);
-		penManager = new PenManager(new Projector(gameViewport));
+		penManager = new PenManager(new Projector(viewportManager.getTop()));
+
 		fluidDrawer = new FluidDrawer(rectDrawer);
 		elementDrawer = new ElementDrawer(rectDrawer);
 		penDrawer = new PenDrawer(rectDrawer);
-		controlStage = new Stage(new LayeredFitViewport(X_RES, CONTROL_HEIGHT,
-				1 - T_PROP, false));
+
+		buttonTable = new ButtonTable(X_RES, viewportManager.getBottom().getWorldHeight());
+		controlStage = new Stage(viewportManager.getBottom());
 
 		addButtons();
 		controlStage.addActor(buttonTable.makeTable());
@@ -72,7 +75,7 @@ public class GameManager extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		// draw game area
-		gameViewport.apply();
+		viewportManager.getTop().apply();
 		rectDrawer.drawRect(0, 0, X_RES, Y_RES, Color.BLACK);
 
 		// draw elements, pen, and fluid
@@ -99,12 +102,13 @@ public class GameManager extends ApplicationAdapter {
 
 	@Override
 	public void resize(int width, int height) {
-		gameViewport.update(width, height, true);
-		rectDrawer.setProjectionMatrix(gameViewport.getCamera().combined);
+		viewportManager.getTop().update(width, height, true);
+		rectDrawer.setProjectionMatrix(viewportManager.getTop().getCamera().combined);
 		controlStage.getViewport().update(width, height);
 	}
 
 	private void addButtons() {
+		// pen buttons
 		penManager.addPenButtons(buttonTable, elementManager::placeElement, elementManager::clearElement,
 				elementManager::eraseElement);
 
